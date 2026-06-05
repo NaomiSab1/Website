@@ -55,20 +55,20 @@ body.ch-dark #cur-r{border-color:rgba(212,201,174,.3)}
 nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:1000;display:flex;align-items:center;padding:0 clamp(22px,5vw,80px);transition:background .45s,border-color .45s,height .35s;border-bottom:1px solid transparent}
 nav.sc{background:rgba(242,240,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-color:var(--border);height:68px}
 .nav-logo{flex-shrink:0}
-.nav-logo img{height:26px;transition:opacity .3s}
+.nav-logo img{height:30px;transition:opacity .3s}
 .logo-light{display:block}
 .logo-dark{display:none}
 nav.sc .logo-light{display:none}
 nav.sc .logo-dark{display:block}
 .nav-center{display:flex;gap:36px;list-style:none;margin:0 auto;align-items:center}
-.nav-center a{font-size:9.5px;font-weight:300;letter-spacing:.24em;text-transform:uppercase;color:rgba(253,252,248,.75);transition:color .3s;position:relative;white-space:nowrap}
+.nav-center a{font-size:11px;font-weight:300;letter-spacing:.24em;text-transform:uppercase;color:rgba(253,252,248,.75);transition:color .3s;position:relative;white-space:nowrap}
 .nav-center a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--gold2);transition:width .35s var(--ease)}
 .nav-center a:hover{color:var(--white)}
 .nav-center a:hover::after{width:100%}
 nav.sc .nav-center a{color:var(--ink3)}
 nav.sc .nav-center a:hover{color:var(--ink)}
 .nav-right{display:flex;align-items:center;gap:12px;margin-left:auto}
-.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;border:1px solid rgba(253,252,248,.45);color:rgba(253,252,248,.85);font-size:9px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;transition:all .3s;white-space:nowrap}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border:1px solid rgba(253,252,248,.45);color:rgba(253,252,248,.85);font-size:10.5px;font-weight:300;letter-spacing:.22em;text-transform:uppercase;transition:all .3s;white-space:nowrap}
 .nav-cta:hover{background:rgba(253,252,248,.12);border-color:var(--white);color:var(--white)}
 nav.sc .nav-cta{border-color:var(--gold);color:var(--gold)}
 nav.sc .nav-cta:hover{background:var(--gold);color:var(--white);border-color:var(--gold)}
@@ -150,15 +150,15 @@ nav.sc .mob-btn span{background:var(--ink)}
 .h-mid{position:relative;z-index:4;flex:1;display:flex;align-items:center;justify-content:center}
 .h-bottom{position:relative;z-index:4;border-top:1px solid rgba(253,252,248,.1);flex-shrink:0;opacity:0;animation:fin .8s ease 2s forwards}
 .h-bottom-inner{padding:clamp(18px,2vw,32px) clamp(22px,5vw,80px);display:flex;align-items:center;justify-content:space-between;gap:40px}
-.h-bottom-left{display:flex;align-items:center;gap:24px}
+.h-bottom-left{display:flex;align-items:center;gap:32px}
 
 .h-eyebrow{display:flex;align-items:center;gap:16px;opacity:0;transform:translateY(12px);animation:fup .8s var(--ease) 1.2s forwards}
 .h-eyebrow-line{width:36px;height:1px;background:var(--gold2)}
-.h-eyebrow-txt{font-size:11px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--gold2)}
+.h-eyebrow-txt{font-size:13px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--gold2)}
 
-.h-award{font-family:var(--font-d);font-size:clamp(13px,1.3vw,20px);font-weight:300;font-style:italic;color:rgba(253,252,248,.6);letter-spacing:.03em;white-space:nowrap}
+.h-award{font-family:var(--font-d);font-size:clamp(14px,1.4vw,22px);font-weight:300;font-style:italic;color:var(--gold2);letter-spacing:.03em;white-space:nowrap}
 
-.h-title{font-family:var(--font-u);font-size:clamp(20px,3.4vw,52px);font-weight:300;letter-spacing:.38em;text-transform:uppercase;color:rgba(253,252,248,.92);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
+.h-title{font-family:var(--font-u);font-size:clamp(24px,4.2vw,64px);font-weight:300;letter-spacing:.38em;text-transform:uppercase;color:rgba(253,252,248,.92);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
 .h-title-dot{color:rgba(253,252,248,.25);letter-spacing:.1em}
 
 .h-actions{display:flex;gap:12px;align-items:center;flex-shrink:0}
@@ -457,7 +457,7 @@ footer{background:var(--dark);padding-top:0}
   .mob-btn{display:flex}
   nav{height:60px;padding:0 20px}
   nav.sc{height:56px}
-  .nav-logo img{height:22px}
+  .nav-logo img{height:26px}
 
   /* ── HERO ── */
   .hero{height:100svh;min-height:540px}

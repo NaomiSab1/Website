@@ -149,15 +149,16 @@ nav.sc .mob-btn span{background:var(--ink)}
 .h-top{position:relative;z-index:4;padding:clamp(96px,11vw,128px) clamp(22px,5vw,80px) 0;flex-shrink:0}
 .h-mid{position:relative;z-index:4;flex:1;display:flex;align-items:center;justify-content:center}
 .h-bottom{position:relative;z-index:4;border-top:1px solid rgba(253,252,248,.1);flex-shrink:0;opacity:0;animation:fin .8s ease 2s forwards}
-.h-bottom-inner{padding:clamp(18px,2vw,30px) clamp(22px,5vw,80px);display:flex;align-items:center;justify-content:space-between;gap:40px;position:relative}
+.h-bottom-inner{padding:clamp(18px,2vw,32px) clamp(22px,5vw,80px);display:flex;align-items:center;justify-content:space-between;gap:40px}
+.h-bottom-left{display:flex;align-items:center;gap:24px}
 
 .h-eyebrow{display:flex;align-items:center;gap:16px;opacity:0;transform:translateY(12px);animation:fup .8s var(--ease) 1.2s forwards}
 .h-eyebrow-line{width:36px;height:1px;background:var(--gold2)}
-.h-eyebrow-txt{font-size:9.5px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--gold2)}
+.h-eyebrow-txt{font-size:11px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--gold2)}
 
-.h-luxury{font-family:var(--font-d);font-size:clamp(28px,3.8vw,58px);font-weight:300;font-style:italic;color:rgba(253,252,248,.82);letter-spacing:.02em;line-height:1}
+.h-award{font-family:var(--font-d);font-size:clamp(13px,1.3vw,20px);font-weight:300;font-style:italic;color:rgba(253,252,248,.6);letter-spacing:.03em;white-space:nowrap}
 
-.h-title{font-family:var(--font-u);font-size:clamp(16px,2.6vw,40px);font-weight:300;letter-spacing:.36em;text-transform:uppercase;color:rgba(253,252,248,.88);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
+.h-title{font-family:var(--font-u);font-size:clamp(20px,3.4vw,52px);font-weight:300;letter-spacing:.38em;text-transform:uppercase;color:rgba(253,252,248,.92);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
 .h-title-dot{color:rgba(253,252,248,.25);letter-spacing:.1em}
 
 .h-actions{display:flex;gap:12px;align-items:center;flex-shrink:0}
@@ -165,7 +166,7 @@ nav.sc .mob-btn span{background:var(--ink)}
 .h-scroll-wrap{position:absolute;bottom:clamp(28px,5vw,52px);right:clamp(22px,5vw,80px);z-index:4;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:fin 1s ease 2.4s forwards}
 .h-scroll-num{font-size:9px;font-weight:300;letter-spacing:.22em;color:rgba(253,252,248,.4)}
 .h-scroll-line{width:1px;height:56px;background:linear-gradient(to bottom,transparent,var(--gold2));animation:spulse 2.4s ease-in-out 2.7s infinite}
-.h-dots{position:absolute;bottom:clamp(28px,5vw,52px);left:clamp(22px,5vw,80px);z-index:4;display:flex;gap:8px;opacity:0;animation:fin 1s ease 2.4s forwards}
+.h-dots{display:flex;gap:8px;flex-shrink:0}
 .h-dot{width:18px;height:1.5px;background:rgba(253,252,248,.25);cursor:none;transition:background .3s,width .4s var(--ease)}
 .h-dot.active{background:var(--gold2);width:36px}
 @keyframes spulse{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
@@ -461,9 +462,10 @@ footer{background:var(--dark);padding-top:0}
   /* ── HERO ── */
   .hero{height:100svh;min-height:540px}
   .h-top{padding-top:clamp(80px,18vw,108px)}
-  .h-title{font-size:clamp(11px,3.4vw,20px);letter-spacing:.22em}
-  .h-luxury{font-size:clamp(22px,6vw,36px)}
+  .h-title{font-size:clamp(13px,3.8vw,24px);letter-spacing:.24em}
+  .h-award{font-size:clamp(11px,2.8vw,15px);white-space:normal}
   .h-bottom-inner{flex-direction:column;align-items:flex-start;gap:14px;padding:16px 20px}
+  .h-bottom-left{flex-direction:column;align-items:flex-start;gap:10px}
   .h-actions{gap:10px;flex-direction:column;width:100%}
   .btn-p,.btn-g{padding:13px 28px;font-size:9px;width:100%;justify-content:center}
   .h-scroll-wrap{display:none}

@@ -152,7 +152,7 @@ nav.sc .mob-btn span{background:var(--ink)}
 .h-bottom-inner{padding:clamp(18px,2vw,32px) clamp(22px,5vw,80px);display:flex;align-items:center;justify-content:space-between;gap:40px}
 .h-bottom-left{display:flex;align-items:center;gap:32px}
 
-.h-eyebrow{display:flex;align-items:center;gap:16px;opacity:0;transform:translateY(12px);animation:fup .8s var(--ease) 1.2s forwards}
+.h-eyebrow{display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(12px);animation:fup .8s var(--ease) 1.2s forwards}
 .h-eyebrow-line{width:36px;height:1px;background:var(--gold2)}
 .h-eyebrow-txt{font-size:13px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--gold2)}
 

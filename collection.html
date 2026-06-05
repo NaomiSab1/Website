@@ -4,95 +4,64 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Collection | Sabdia Constructions</title>
-<meta name="description" content="The Sabdia Collection — a curated edit of the materials, craftsmanship, and design sensibilities that define our approach to luxury residential development.">
+<meta name="description" content="The Sabdia Collection — a portfolio of completed luxury residences across inner Brisbane. Award-winning homes designed, developed, and constructed by Sabdia.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/style.css">
 <style>
-
-/* ── COLLECTION GALLERY ── */
-.col-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:auto auto;
-  gap:6px;
-}
-/* Row 1: tall left + 2 stacked right */
-.col-left{
-  grid-column:1;
-  grid-row:1/3;
-  min-height:680px;
-}
-.col-right-top{
-  grid-column:2;
-  grid-row:1;
-}
-.col-right-bottom{
-  grid-column:2;
-  grid-row:2;
-}
-/* Row 2: 3 equal bottom */
-.col-bottom-row{
-  grid-column:1/-1;
+/* ── PORTFOLIO GRID ── */
+.portfolio-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-top:0;
+  gap:clamp(28px,3vw,48px) clamp(20px,2.5vw,36px);
 }
-.col-bottom-item{
-  aspect-ratio:4/3;
+.port-card{
+  display:block;
+  cursor:none;
+  text-decoration:none;
 }
-
-.col-item{
+.port-img-wrap{
   position:relative;
   overflow:hidden;
-  cursor:none;
+  aspect-ratio:4/3;
+  margin-bottom:16px;
+  background:var(--bg3);
 }
-.col-item img{
+.port-img-wrap img{
   width:100%;
   height:100%;
   object-fit:cover;
-  filter:saturate(.88) brightness(.97);
-  transition:filter .65s var(--ease),transform .8s var(--ease);
+  filter:saturate(.88);
+  transition:transform .75s cubic-bezier(0.16,1,0.3,1),filter .5s;
   display:block;
 }
-.col-item:hover img{
-  filter:saturate(1) brightness(1);
-  transform:scale(1.03);
+.port-card:hover .port-img-wrap img{
+  transform:scale(1.04);
+  filter:saturate(1);
 }
-.col-item-cap{
-  position:absolute;
-  bottom:0;left:0;right:0;
-  padding:20px 22px;
-  background:linear-gradient(transparent,rgba(14,13,11,.6));
-  opacity:0;
-  transform:translateY(6px);
-  transition:opacity .3s,transform .35s var(--ease);
+.port-name{
+  font-family:var(--font-u);
+  font-size:12px;
+  font-weight:400;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ink);
+  margin-bottom:5px;
+  transition:color .3s;
 }
-.col-item:hover .col-item-cap{opacity:1;transform:translateY(0)}
-.col-item-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:var(--gold2);margin-bottom:3px}
-.col-item-title{font-family:var(--font-d);font-size:17px;font-weight:300;font-style:italic;color:var(--white)}
-
-/* Materials swatches */
-.materials-row{display:flex;gap:0;border:1px solid var(--border);overflow:hidden;margin-top:52px}
-.mat-chip{flex:1;padding:32px 20px;border-right:1px solid var(--border);text-align:center;transition:background .3s}
-.mat-chip:last-child{border-right:none}
-.mat-chip:hover{background:var(--bg2)}
-.mat-swatch{width:44px;height:44px;border-radius:50%;margin:0 auto 14px;border:1px solid var(--border)}
-.mat-name{font-family:var(--font-d);font-size:15px;font-weight:300;color:var(--ink);margin-bottom:4px}
-.mat-desc{font-size:11px;font-weight:300;color:var(--taupe);letter-spacing:.06em}
+.port-card:hover .port-name{color:var(--gold)}
+.port-loc{
+  font-size:12px;
+  font-weight:300;
+  color:var(--ink3);
+  letter-spacing:.02em;
+}
 
 @media(max-width:900px){
-  .col-grid{grid-template-columns:1fr}
-  .col-left{grid-row:auto;min-height:400px}
-  .col-right-top,.col-right-bottom{grid-column:1;grid-row:auto}
-  .col-bottom-row{grid-template-columns:1fr 1fr}
-  .materials-row{flex-wrap:wrap}
-  .mat-chip{flex:1 1 33%}
+  .portfolio-grid{grid-template-columns:repeat(2,1fr)}
 }
-@media(max-width:600px){
-  .col-bottom-row{grid-template-columns:1fr}
-  .mat-chip{flex:1 1 50%}
+@media(max-width:560px){
+  .portfolio-grid{grid-template-columns:1fr;gap:32px 0}
 }
 </style>
 </head>
@@ -100,199 +69,101 @@
 
 <div id="nav-placeholder"></div>
 
-<!-- ════════════════════════════════════════════
-     PAGE HEADER — light
-════════════════════════════════════════════ -->
-<section style="padding:clamp(130px,18vw,180px) clamp(22px,5vw,80px) clamp(40px,5vw,64px);background:var(--bg);border-bottom:1px solid var(--border)">
-  <div class="inner" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:flex-end">
-    <div>
-      <div class="slabel reveal" style="margin-bottom:18px">Aesthetic &amp; Craft</div>
-      <h1 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(48px,9vw,120px);font-weight:300;line-height:.88;letter-spacing:-.035em;color:var(--ink)">The Sabdia<br><em style="color:var(--gold)">Collection</em>.</h1>
-    </div>
-    <div class="reveal d2" style="padding-bottom:8px">
-      <p style="font-size:13.5px;font-weight:300;line-height:1.9;color:var(--ink3);max-width:400px">A curated edit of the spaces, materials, and details that define our approach to luxury residential architecture — the visual language of Sabdia.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════
-     MAIN GALLERY GRID
-════════════════════════════════════════════ -->
-<section style="padding:clamp(40px,5vw,64px) clamp(22px,5vw,80px) 0;background:var(--bg)">
+<!-- PAGE HEADER -->
+<section style="padding:clamp(130px,18vw,180px) clamp(22px,5vw,80px) clamp(48px,6vw,72px);background:var(--bg);border-bottom:1px solid var(--border)">
   <div class="inner">
-
-    <!-- Top: tall left + 2 stacked right -->
-    <div class="col-grid reveal">
-
-      <!-- TALL LEFT — staircase / entry volume -->
-      <div class="col-item col-left" style="aspect-ratio:unset">
-        <img src="https://static.wixstatic.com/media/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png/v1/fill/w_1200,h_1600,fp_0.5_0.3,q_90,enc_avif,quality_auto/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png"
-             alt="Architectural staircase" loading="eager">
-        <div class="col-item-cap">
-          <div class="col-item-label">Architecture</div>
-          <div class="col-item-title">Form &amp; Volume</div>
-        </div>
-      </div>
-
-      <!-- RIGHT TOP — living room -->
-      <div class="col-item col-right-top" style="aspect-ratio:16/10">
-        <img src="https://static.wixstatic.com/media/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg/v1/fill/w_1200,h_750,al_c,q_85/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg"
-             alt="Living room" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Living</div>
-          <div class="col-item-title">Open-Plan Grandeur</div>
-        </div>
-      </div>
-
-      <!-- RIGHT BOTTOM — kitchen / dining -->
-      <div class="col-item col-right-bottom" style="aspect-ratio:16/10">
-        <img src="https://static.wixstatic.com/media/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg/v1/fill/w_1200,h_750,al_c,q_85/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg"
-             alt="Kitchen and dining" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Kitchen</div>
-          <div class="col-item-title">Culinary Precision</div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Bottom row: 3 equal -->
-    <div class="col-bottom-row reveal d1" style="margin-top:6px">
-      <div class="col-item col-bottom-item">
-        <img src="https://static.wixstatic.com/media/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg/v1/fill/w_800,h_600,fp_0.5_0.65,q_90,enc_avif,quality_auto/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg"
-             alt="Entry" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Entry</div>
-          <div class="col-item-title">First Impressions</div>
-        </div>
-      </div>
-      <div class="col-item col-bottom-item">
-        <img src="https://static.wixstatic.com/media/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.5,q_90,enc_avif,quality_auto/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png"
-             alt="Facade" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Exterior</div>
-          <div class="col-item-title">Architectural Presence</div>
-        </div>
-      </div>
-      <div class="col-item col-bottom-item">
-        <img src="https://static.wixstatic.com/media/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.5,q_90,enc_avif,quality_auto/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png"
-             alt="Exterior" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Landscape</div>
-          <div class="col-item-title">Setting &amp; Context</div>
-        </div>
-      </div>
-    </div>
-
+    <div class="slabel reveal" style="margin-bottom:18px">Our Work</div>
+    <h1 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(48px,9vw,120px);font-weight:300;line-height:.88;letter-spacing:-.035em;color:var(--ink)">The Sabdia<br><em style="color:var(--gold)">Collection</em>.</h1>
+    <p class="reveal d2" style="font-size:13.5px;font-weight:300;line-height:1.9;color:var(--ink3);max-width:480px;margin-top:28px">A portfolio of completed luxury residences across inner Brisbane — each one designed, developed, and constructed entirely in-house by Sabdia.</p>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════
-     SECOND GALLERY ROW
-════════════════════════════════════════════ -->
-<section style="padding:6px clamp(22px,5vw,80px) clamp(52px,7vw,88px);background:var(--bg)">
+<!-- PORTFOLIO GRID -->
+<section style="padding:clamp(52px,7vw,96px) clamp(22px,5vw,80px) clamp(80px,12vw,140px);background:var(--bg)">
   <div class="inner">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+    <div class="portfolio-grid">
 
-      <div class="col-item reveal" style="aspect-ratio:3/4">
-        <img src="https://static.wixstatic.com/media/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png/v1/fill/w_700,h_933,fp_0.5_0.3,q_85,enc_avif,quality_auto/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png"
-             alt="Master suite" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Master Suite</div>
-          <div class="col-item-title">Private Retreat</div>
+      <!-- ENCANTO -->
+      <a class="port-card reveal" href="projects/encanto.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png/v1/fill/w_800,h_600,q_85,enc_avif,quality_auto/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png" alt="ENCANTO" loading="lazy">
         </div>
-      </div>
+        <div class="port-name">ENCANTO</div>
+        <div class="port-loc">Camp Hill QLD, Australia</div>
+      </a>
 
-      <div class="col-item reveal d1" style="grid-row:span 1;display:grid;grid-template-rows:1fr 1fr;gap:6px;aspect-ratio:unset">
-        <div class="col-item" style="aspect-ratio:unset">
-          <img src="https://static.wixstatic.com/media/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png/v1/fill/w_700,h_440,fp_0.5_0.4,q_85,enc_avif,quality_auto/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png"
-               alt="Outdoor pool" loading="lazy">
-          <div class="col-item-cap">
-            <div class="col-item-label">Outdoor</div>
-            <div class="col-item-title">Resort Living</div>
-          </div>
+      <!-- NERO -->
+      <a class="port-card reveal d1" href="projects/nero.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png/v1/fill/w_800,h_600,q_85,enc_avif,quality_auto/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png" alt="NERO" loading="lazy">
         </div>
-        <div class="col-item" style="aspect-ratio:unset">
-          <img src="https://static.wixstatic.com/media/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png/v1/fill/w_700,h_440,fp_0.5_0.6,q_85,enc_avif,quality_auto/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png"
-               alt="Bathroom" loading="lazy">
-          <div class="col-item-cap">
-            <div class="col-item-label">Bathroom</div>
-            <div class="col-item-title">Spa Sanctuary</div>
-          </div>
+        <div class="port-name">NERO</div>
+        <div class="port-loc">Rochedale QLD, Australia</div>
+      </a>
+
+      <!-- CAPRI -->
+      <a class="port-card reveal d2" href="properties/capri.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png/v1/fill/w_800,h_600,fp_0.3_0.5,q_85,enc_avif,quality_auto/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png" alt="CAPRI" loading="lazy">
         </div>
-      </div>
+        <div class="port-name">CAPRI</div>
+        <div class="port-loc">Brisbane QLD, Australia</div>
+      </a>
 
-      <div class="col-item reveal d2" style="aspect-ratio:3/4">
-        <img src="https://static.wixstatic.com/media/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png/v1/fill/w_700,h_933,fp_0.5_0.7,q_90,enc_avif,quality_auto/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png"
-             alt="Detail" loading="lazy">
-        <div class="col-item-cap">
-          <div class="col-item-label">Craftsmanship</div>
-          <div class="col-item-title">Considered Details</div>
+      <!-- AETHER -->
+      <a class="port-card reveal" href="properties/aether.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.4,q_85,enc_avif,quality_auto/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png" alt="AETHER" loading="lazy">
         </div>
-      </div>
+        <div class="port-name">AETHER</div>
+        <div class="port-loc">Brisbane QLD, Australia</div>
+      </a>
 
-    </div>
-  </div>
-</section>
+      <!-- QASR -->
+      <a class="port-card reveal d1" href="properties/qasr.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png/v1/fill/w_800,h_600,q_90,enc_avif,quality_auto/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png" alt="QASR" loading="lazy">
+        </div>
+        <div class="port-name">QASR</div>
+        <div class="port-loc">Coorparoo QLD, Australia</div>
+      </a>
 
-<!-- ════════════════════════════════════════════
-     MATERIAL PALETTE
-════════════════════════════════════════════ -->
-<section class="sp-sm" style="background:var(--bg2);border-top:1px solid var(--border)">
-  <div class="inner">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:52px">
-      <div>
-        <div class="slabel reveal" style="margin-bottom:14px">Material Palette</div>
-        <h2 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(28px,4vw,52px);font-weight:300;color:var(--ink);letter-spacing:-.02em">The materials of <em style="color:var(--gold)">Sabdia</em>.</h2>
-      </div>
-      <p class="reveal d2" style="font-size:13px;font-weight:300;line-height:1.85;color:var(--ink3)">Every Sabdia residence is crafted from a considered palette of natural materials — chosen for their beauty, longevity, and the way they age with grace over decades.</p>
-    </div>
-    <div class="materials-row reveal d3">
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#F2EDE6,#E8DDD0)"></div>
-        <div class="mat-name">Limestone</div>
-        <div class="mat-desc">Flooring &amp; facades</div>
-      </div>
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#8B7355,#6B5840)"></div>
-        <div class="mat-name">Spotted Gum</div>
-        <div class="mat-desc">Joinery &amp; flooring</div>
-      </div>
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#1A1A1A,#2D2D2D)"></div>
-        <div class="mat-name">Nero Marquina</div>
-        <div class="mat-desc">Bathrooms &amp; features</div>
-      </div>
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#C0B090,#A09070)"></div>
-        <div class="mat-name">Brushed Brass</div>
-        <div class="mat-desc">Hardware &amp; tapware</div>
-      </div>
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#D4C9B8,#C4BAA8)"></div>
-        <div class="mat-name">Travertine</div>
-        <div class="mat-desc">Bathrooms &amp; pools</div>
-      </div>
-      <div class="mat-chip">
-        <div class="mat-swatch" style="background:linear-gradient(135deg,#F0ECE4,#E4DECE)"></div>
-        <div class="mat-name">Render</div>
-        <div class="mat-desc">Walls &amp; ceilings</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <!-- SOLACE -->
+      <a class="port-card reveal d2" href="properties/solace.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg/v1/fill/w_800,h_600,fp_0.5_0.65,q_90,enc_avif,quality_auto/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg" alt="SOLACE" loading="lazy">
+        </div>
+        <div class="port-name">SOLACE</div>
+        <div class="port-loc">Camp Hill QLD, Australia</div>
+      </a>
 
-<!-- ════════════════════════════════════════════
-     CTA
-════════════════════════════════════════════ -->
-<section class="sp" style="border-top:1px solid var(--border);text-align:center">
-  <div class="inner-sm">
-    <div class="slabel reveal" style="justify-content:center;margin-bottom:18px">Experience It</div>
-    <h2 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(32px,5vw,64px);font-weight:300;color:var(--ink);margin-bottom:22px;letter-spacing:-.02em">See these spaces <em style="color:var(--gold)">in person</em>.</h2>
-    <p class="reveal d2" style="font-size:13px;font-weight:300;color:var(--ink3);max-width:380px;margin:0 auto 36px;line-height:1.85">Schedule a private tour of our current properties and experience the Sabdia difference for yourself.</p>
-    <div class="reveal d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <a href="properties/" class="btn-p">View Properties</a>
-      <a href="contact.html" class="btn-g">Book a Tour</a>
+      <!-- SIERRA -->
+      <a class="port-card reveal" href="properties/sierra.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.65,q_90,enc_avif,quality_auto/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png" alt="SIERRA" loading="lazy">
+        </div>
+        <div class="port-name">SIERRA</div>
+        <div class="port-loc">Holland Park West QLD, Australia</div>
+      </a>
+
+      <!-- CASPIAN -->
+      <a class="port-card reveal d1" href="properties/caspian.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.65,q_90,enc_avif,quality_auto/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png" alt="CASPIAN" loading="lazy">
+        </div>
+        <div class="port-name">CASPIAN</div>
+        <div class="port-loc">Ascot QLD, Australia</div>
+      </a>
+
+      <!-- HERMOSA — placeholder image, update when available -->
+      <a class="port-card reveal d2" href="projects/hermosa.html">
+        <div class="port-img-wrap">
+          <img src="https://static.wixstatic.com/media/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png/v1/fill/w_800,h_600,fp_0.5_0.3,q_85,enc_avif,quality_auto/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png" alt="HERMOSA" loading="lazy">
+        </div>
+        <div class="port-name">HERMOSA</div>
+        <div class="port-loc">Camp Hill QLD, Australia</div>
+      </a>
+
     </div>
   </div>
 </section>

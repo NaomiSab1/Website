@@ -161,7 +161,9 @@ nav.sc .mob-btn span{background:var(--ink)}
 .h-title{font-family:var(--font-u);font-size:30px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:rgba(253,252,248,.85);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
 .h-title-dot{color:rgba(253,252,248,.25);letter-spacing:.1em}
 
-.h-actions{display:flex;gap:12px;align-items:center;flex-shrink:0}
+.h-actions-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:12px;flex-shrink:0}
+.h-desc{font-size:11px;font-weight:300;line-height:1.75;color:rgba(253,252,248,.55);letter-spacing:.02em;max-width:360px;text-align:right}
+.h-actions{display:flex;gap:12px;align-items:center}
 
 .h-scroll-wrap{position:absolute;bottom:clamp(28px,5vw,52px);right:clamp(22px,5vw,80px);z-index:4;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:fin 1s ease 2.4s forwards}
 .h-scroll-num{font-size:9px;font-weight:300;letter-spacing:.22em;color:rgba(253,252,248,.4)}

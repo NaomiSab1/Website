@@ -14,8 +14,7 @@
 
 <div id="loader">
   <div class="ld-logo">
-    <img src="${base}assets/logo.png" alt="Sabdia Constructions"
-         onerror="this.onerror=null;this.src='https://static.wixstatic.com/media/1cc2db_f012027bbf0c45ebb4ae6d847309d59f~mv2.png/v1/fill/w_422,h_70,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/DESIGN%20%C2%B7%20DEVELOP%20%C2%B7%20CONSTRUCT.png'">
+    <img src="https://static.wixstatic.com/media/1cc2db_f012027bbf0c45ebb4ae6d847309d59f~mv2.png/v1/fill/w_422,h_70,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/DESIGN%20%C2%B7%20DEVELOP%20%C2%B7%20CONSTRUCT.png" alt="Sabdia Constructions">
   </div>
   <div class="ld-rule"></div>
 </div>

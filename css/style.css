@@ -158,7 +158,7 @@ nav.sc .mob-btn span{background:var(--ink)}
 
 .h-award{font-family:var(--font-d);font-size:clamp(14px,1.4vw,22px);font-weight:300;font-style:italic;color:var(--gold2);letter-spacing:.03em;white-space:nowrap}
 
-.h-title{font-family:var(--font-u);font-size:clamp(18px,2.6vw,42px);font-weight:300;letter-spacing:.38em;text-transform:uppercase;color:rgba(253,252,248,.92);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
+.h-title{font-family:var(--font-u);font-size:clamp(11px,1.2vw,20px);font-weight:300;letter-spacing:.38em;text-transform:uppercase;color:rgba(253,252,248,.92);white-space:nowrap;text-align:center;opacity:0;transform:translateY(20px);animation:fup 1s var(--ease) 1.4s forwards}
 .h-title-dot{color:rgba(253,252,248,.25);letter-spacing:.1em}
 
 .h-actions{display:flex;gap:12px;align-items:center;flex-shrink:0}

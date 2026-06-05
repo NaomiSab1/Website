@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-base="">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection | Sabdia Constructions</title>
+<meta name="description" content="The Sabdia Collection — a curated edit of the materials, craftsmanship, and design sensibilities that define our approach to luxury residential development.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.col-masonry{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:300px;gap:8px}
+.col-item-m{position:relative;overflow:hidden;cursor:none}
+.col-item-m.tall{grid-row:span 2}
+.col-item-m.wide{grid-column:span 2}
+.col-item-m img{width:100%;height:100%;object-fit:cover;filter:saturate(.82);transition:filter .6s,transform .7s var(--ease)}
+.col-item-m:hover img{filter:saturate(1);transform:scale(1.04)}
+.col-item-m-cap{position:absolute;bottom:0;left:0;right:0;padding:24px;background:linear-gradient(transparent,rgba(14,13,11,.72));opacity:0;transition:opacity .35s;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.col-item-m:hover .col-item-m-cap{opacity:1;transform:translateY(0)}
+.col-item-m-label{font-size:9.5px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:var(--gold2);margin-bottom:4px}
+.col-item-m-title{font-family:var(--font-d);font-size:18px;font-weight:300;font-style:italic;color:var(--white)}
+.materials-row{display:flex;gap:0;border:1px solid var(--border);overflow:hidden;margin-top:52px}
+.mat-chip{flex:1;padding:32px 24px;border-right:1px solid var(--border);text-align:center;transition:background .3s}
+.mat-chip:last-child{border-right:none}
+.mat-chip:hover{background:var(--bg2)}
+.mat-swatch{width:48px;height:48px;border-radius:50%;margin:0 auto 14px;border:1px solid var(--border)}
+.mat-name{font-family:var(--font-d);font-size:15px;font-weight:300;color:var(--ink);margin-bottom:4px}
+.mat-desc{font-size:11px;font-weight:300;color:var(--taupe);letter-spacing:.06em}
+@media(max-width:900px){.col-masonry{grid-template-columns:repeat(2,1fr)}.col-item-m.wide{grid-column:1}.materials-row{flex-wrap:wrap}.mat-chip{flex:1 1 50%}}
+@media(max-width:600px){.col-masonry{grid-template-columns:1fr}.col-item-m.tall{grid-row:span 1}}
+</style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<!-- HERO -->
+<section style="background:var(--dark);padding:clamp(140px,20vw,200px) clamp(22px,5vw,80px) clamp(72px,10vw,120px)">
+  <div class="inner">
+    <div class="slabel slabel-dark reveal" style="margin-bottom:20px">Aesthetic &amp; Craft</div>
+    <h1 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(52px,10vw,140px);font-weight:300;line-height:.88;letter-spacing:-.035em;color:var(--white)">The Sabdia<br><em style="color:var(--gold2)">Collection</em>.</h1>
+    <p class="reveal d2" style="font-size:13px;font-weight:300;color:rgba(253,252,248,.45);max-width:480px;margin-top:28px;line-height:1.85">A curated edit of the materials, details, spaces, and craftsmanship that define our approach to luxury residential architecture — the visual language of Sabdia.</p>
+  </div>
+</section>
+
+<!-- MASONRY GALLERY -->
+<section class="sp" style="padding-top:clamp(52px,7vw,88px)">
+  <div class="inner">
+    <div class="slabel reveal" style="margin-bottom:32px">Interior Spaces</div>
+    <div class="col-masonry reveal d1">
+      <div class="col-item-m tall">
+        <img src="https://static.wixstatic.com/media/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png/v1/fill/w_700,h_1000,q_90,enc_avif,quality_auto/1cc2db_f85ca82c83644534943559cb4b0067c9~mv2.png" alt="Interior" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Living</div><div class="col-item-m-title">Grand Living Spaces</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg/v1/fill/w_700,h_500,al_c,q_85/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg" alt="Kitchen" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Kitchen</div><div class="col-item-m-title">Bespoke Culinary Spaces</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg/v1/fill/w_700,h_500,al_c,q_85/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg" alt="Bedroom" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Bedroom</div><div class="col-item-m-title">Master Retreats</div></div>
+      </div>
+      <div class="col-item-m wide">
+        <img src="https://static.wixstatic.com/media/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg/v1/fill/w_1200,h_500,al_c,q_85/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg" alt="Exterior" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Exterior</div><div class="col-item-m-title">Architectural Presence</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png/v1/fill/w_700,h_500,al_c,q_90,enc_avif,quality_auto/1cc2db_62a0dd9b4ea14ac390c3e94abab03d56~mv2.png" alt="Detail" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Craftsmanship</div><div class="col-item-m-title">Considered Details</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png/v1/fill/w_700,h_500,al_c,q_90,enc_avif,quality_auto/1cc2db_74fc877fe2204d2a98e663d0c7df421b~mv2.png" alt="Pool" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Outdoor</div><div class="col-item-m-title">Resort-Style Living</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png/v1/fill/w_700,h_500,al_c,q_85,enc_avif,quality_auto/1cc2db_e8590ba3e20e4a3aa61c5fabafcae28b~mv2.png" alt="Entry" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Entry</div><div class="col-item-m-title">First Impressions</div></div>
+      </div>
+      <div class="col-item-m tall">
+        <img src="https://static.wixstatic.com/media/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png/v1/fill/w_700,h_1000,q_85,enc_avif,quality_auto/1cc2db_7d6ddb5093af4f3eb6b9d3acd088be79~mv2.png" alt="Architecture" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Architecture</div><div class="col-item-m-title">Timeless Form</div></div>
+      </div>
+      <div class="col-item-m">
+        <img src="https://static.wixstatic.com/media/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png/v1/fill/w_700,h_500,al_c,q_85,enc_avif,quality_auto/1cc2db_7d5ad42861414a26bf1236edfa6e4603~mv2.png" alt="Bathroom" loading="lazy">
+        <div class="col-item-m-cap"><div class="col-item-m-label">Bathroom</div><div class="col-item-m-title">Spa-Level Sanctuary</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MATERIALS -->
+<section class="sp" style="background:var(--bg2);border-top:1px solid var(--border)">
+  <div class="inner">
+    <div class="slabel reveal" style="margin-bottom:20px">Material Palette</div>
+    <h2 class="about-h reveal d1" style="font-size:clamp(28px,4vw,48px);margin-bottom:8px">The materials of <em>Sabdia</em>.</h2>
+    <p class="about-p reveal d2" style="margin-bottom:0">Every Sabdia residence is crafted from a considered palette of natural materials — chosen for their beauty, longevity, and the way they age with grace.</p>
+    <div class="materials-row reveal d3">
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#F2EDE6,#E8DDD0)"></div>
+        <div class="mat-name">Limestone</div>
+        <div class="mat-desc">Flooring &amp; facades</div>
+      </div>
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#8B7355,#6B5840)"></div>
+        <div class="mat-name">Spotted Gum</div>
+        <div class="mat-desc">Joinery &amp; flooring</div>
+      </div>
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#1A1A1A,#2D2D2D)"></div>
+        <div class="mat-name">Nero Marquina</div>
+        <div class="mat-desc">Bathrooms &amp; feature walls</div>
+      </div>
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#C0B090,#A09070)"></div>
+        <div class="mat-name">Brushed Brass</div>
+        <div class="mat-desc">Hardware &amp; tapware</div>
+      </div>
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#D4C9B8,#C4BAA8)"></div>
+        <div class="mat-name">Roman Travertine</div>
+        <div class="mat-desc">Bathrooms &amp; pool surrounds</div>
+      </div>
+      <div class="mat-chip">
+        <div class="mat-swatch" style="background:linear-gradient(135deg,#E8E0D4,#D8D0C4)"></div>
+        <div class="mat-name">Render &amp; Plaster</div>
+        <div class="mat-desc">Feature walls &amp; ceilings</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sp" style="background:var(--dark);text-align:center">
+  <div class="inner-sm">
+    <div class="slabel slabel-dark reveal" style="justify-content:center;margin-bottom:20px">Experience It</div>
+    <h2 class="reveal d1" style="font-family:var(--font-d);font-size:clamp(32px,5vw,64px);font-weight:300;color:var(--white);margin-bottom:24px;letter-spacing:-.02em">See these spaces <em style="color:var(--gold2)">in person</em>.</h2>
+    <p class="reveal d2" style="font-size:13px;font-weight:300;color:rgba(253,252,248,.4);max-width:400px;margin:0 auto 36px;line-height:1.8">Schedule a private tour of our current properties and experience the Sabdia difference for yourself.</p>
+    <div class="reveal d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="properties/" class="btn-p">View Properties</a>
+      <a href="contact.html" class="btn-g btn-g-light">Book a Tour</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+<script src="js/components.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

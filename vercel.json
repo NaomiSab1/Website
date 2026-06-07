@@ -1,0 +1,14 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "_site",
+  "installCommand": "npm install",
+  "redirects": [
+    { "source": "/properties/qasr.html",    "destination": "/properties/qasr/",    "permanent": true },
+    { "source": "/properties/solace.html",  "destination": "/properties/solace/",  "permanent": true },
+    { "source": "/properties/sierra.html",  "destination": "/properties/sierra/",  "permanent": true },
+    { "source": "/properties/caspian.html", "destination": "/properties/caspian/", "permanent": true },
+    { "source": "/properties/capri.html",   "destination": "/properties/capri/",   "permanent": true },
+    { "source": "/properties/aether.html",  "destination": "/properties/aether/",  "permanent": true },
+    { "source": "/index.html",              "destination": "/",                    "permanent": true }
+  ]
+}

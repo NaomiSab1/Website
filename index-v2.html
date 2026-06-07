@@ -9,13 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/style-v2.css">
-<!-- Force loader out on DOMContentLoaded — don't wait for images -->
+<!-- Skip loader for draft preview -->
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(function(){
-    var l = document.getElementById('loader');
-    if(l){ l.classList.add('out'); setTimeout(function(){if(l.parentNode)l.parentNode.removeChild(l);},950); }
-  }, 1800);
+  var l = document.getElementById('loader');
+  if(l) l.parentNode.removeChild(l);
 });
 </script>
 <!-- Draft notice banner -->

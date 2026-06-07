@@ -1,6 +1,1 @@
-{
-  "redirects": [
-    { "source": "/properties/qasr.html",    "destination": "/properties/qasr.html",    "permanent": false },
-    { "source": "/index.html",              "destination": "/",                    "permanent": true }
-  ]
-}
+{}

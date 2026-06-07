@@ -9,6 +9,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/style-v2.css">
+<!-- Force loader out on DOMContentLoaded — don't wait for images -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){
+    var l = document.getElementById('loader');
+    if(l){ l.classList.add('out'); setTimeout(function(){if(l.parentNode)l.parentNode.removeChild(l);},950); }
+  }, 1800);
+});
+</script>
 <!-- Draft notice banner -->
 <style>
 .draft-banner{position:fixed;bottom:20px;right:20px;z-index:99999;background:rgba(14,13,11,.92);border:1px solid rgba(158,139,106,.5);padding:10px 18px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(16px);font-family:'Jost',sans-serif}
@@ -474,17 +483,6 @@
 
 <script src="js/components.js"></script>
 <script src="js/main.js"></script>
-<!-- V2: force loader out after 2.5s so slow/blocked images don't stall it -->
-<script>
-setTimeout(function(){
-  var l = document.getElementById('loader');
-  if(l && !l.classList.contains('out')){
-    l.classList.add('out');
-    setTimeout(function(){l.remove()},950);
-  }
-}, 2500);
-</script>
-
 <!-- V2: Progress bar + enhanced interactions -->
 <script>
 (function(){

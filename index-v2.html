@@ -486,6 +486,16 @@
 
 <script src="js/components.js"></script>
 <script src="js/main.js"></script>
+<!-- V2: force loader out after 2.5s so slow/blocked images don't stall it -->
+<script>
+setTimeout(function(){
+  var l = document.getElementById('loader');
+  if(l && !l.classList.contains('out')){
+    l.classList.add('out');
+    setTimeout(function(){l.remove()},950);
+  }
+}, 2500);
+</script>
 
 <!-- V2: Progress bar + enhanced interactions -->
 <script>

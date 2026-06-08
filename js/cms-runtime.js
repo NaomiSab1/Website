@@ -124,25 +124,37 @@
   }
 
   function applyHero(sec) {
-    const hero = document.querySelector('.hero, header.hero');
+    const hero = document.querySelector('.hero, header.hero, section.hero');
     if (!hero) return;
     const c = sec.content || {};
 
     const title = hero.querySelector('.h-title');
     if (title && c.title) {
-      // Preserve <br><em> formatting only if cms title has newlines
-      const lines = String(c.title).split('\n');
-      title.innerHTML = lines.map((l, i) => i === 1 ? `<em>${escapeHTML(l)}</em>` : escapeHTML(l)).join('<br>');
+      // Tokenize: support newlines or " · " separators
+      const tokens = String(c.title).split(/[\n·]+/).map(s => s.trim()).filter(Boolean);
+      const hasDots = !!title.querySelector('.h-title-dot');
+      const hasEm   = !!title.querySelector('em');
+      if (hasDots) {
+        title.innerHTML = tokens.map(t => escapeHTML(t)).join('<span class="h-title-dot"> · </span>');
+      } else if (hasEm && tokens.length > 1) {
+        // Preserve the old <br><em>middle</em><br> pattern
+        title.innerHTML = tokens.map((t, i) => i === 1 ? `<em>${escapeHTML(t)}</em>` : escapeHTML(t)).join('<br>');
+      } else if (tokens.length > 1) {
+        title.innerHTML = tokens.map(t => escapeHTML(t)).join('<br>');
+      } else {
+        title.textContent = c.title;
+      }
     }
+
     setText(hero.querySelector('.h-eyebrow-txt'), c.eyebrow);
-    setText(hero.querySelector('.h-sub'), c.subtitle);
+    setText(hero.querySelector('.h-desc, .h-sub, .h-subtitle'), c.subtitle);
 
     const actions = hero.querySelector('.h-actions');
     if (actions) {
       const links = actions.querySelectorAll('a');
       if (links[0] && c.ctaPrimary) {
-        links[0].href = c.ctaPrimary.href || links[0].href;
         const arrow = links[0].querySelector('.btn-arrow');
+        links[0].href = c.ctaPrimary.href || links[0].href;
         links[0].textContent = (c.ctaPrimary.label || links[0].textContent.trim()) + ' ';
         if (arrow) links[0].appendChild(arrow);
       }
@@ -152,7 +164,7 @@
       }
     }
 
-    // Slides
+    // Slides (legacy slideshow layout)
     if (Array.isArray(c.slides) && c.slides.length) {
       const slidesHost = hero.querySelector('.h-slides, #hSlides');
       if (slidesHost) {
@@ -161,12 +173,14 @@
             <img src="${escapeAttr(s.image || '')}" alt="${escapeAttr(s.name || '')}" loading="${i === 0 ? 'eager' : 'lazy'}">
           </div>
         `).join('');
-        // Update strip name/number if exists
         const stripName = document.getElementById('hStripName');
         const stripNum = document.getElementById('hStripNum');
         if (stripName) stripName.textContent = c.slides[0].name || '';
         if (stripNum) stripNum.innerHTML = `01 <span>/ ${String(c.slides.length).padStart(2, '0')}</span>`;
       }
+      // New hero layout single bg image
+      const heroBg = hero.querySelector('.h-bg img, .h-image img');
+      if (heroBg && c.slides[0]) heroBg.src = c.slides[0].image;
     }
   }
 

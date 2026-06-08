@@ -27,16 +27,33 @@
   let canPublish = CMS.can('pages.publish');
 
   // ---------- shell ----------
+  // View mode toggle: form (full editor), split (editor + iframe), preview (full iframe)
+  let viewMode = sessionStorage.getItem('sabdia.cms.viewMode') || 'split';
+
+  const modeToggle = CMS.el(`
+    <div class="view-mode-toggle" role="tablist" aria-label="View mode">
+      <button data-mode="form"    class="${viewMode === 'form'    ? 'active' : ''}" title="Form only">✎ Form</button>
+      <button data-mode="split"   class="${viewMode === 'split'   ? 'active' : ''}" title="Side-by-side preview">⫶ Split</button>
+      <button data-mode="preview" class="${viewMode === 'preview' ? 'active' : ''}" title="Full preview">▦ Preview</button>
+    </div>
+  `);
+  modeToggle.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    viewMode = b.dataset.mode;
+    sessionStorage.setItem('sabdia.cms.viewMode', viewMode);
+    modeToggle.querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.mode === viewMode));
+    applyViewMode();
+  }));
+
   const saveBtn    = AdminShell.button('Save Draft', { onClick: saveDraft });
   const publishBtn = AdminShell.button('Publish', { primary: true, onClick: publishChanges });
-  const previewBtn = AdminShell.button('Preview', { onClick: openPreview });
+  const previewBtn = AdminShell.button('Open in new tab', { onClick: openPreview });
   if (!canEdit) { saveBtn.style.display = 'none'; }
   if (!canPublish) { publishBtn.style.display = 'none'; }
 
   const content = AdminShell.mount('pages', {
     title: page.title,
     crumbs: ['Admin', 'Pages', page.title],
-    actions: [previewBtn, saveBtn, publishBtn]
+    actions: [modeToggle, previewBtn, saveBtn, publishBtn]
   });
   if (!content) return;
 
@@ -47,9 +64,9 @@
 
   // ---------- main layout ----------
   content.appendChild(CMS.el(`
-    <div class="editor-layout">
+    <div class="editor-layout" id="editorLayout" data-mode="${viewMode}">
       <div class="editor-sections" id="secList"></div>
-      <div class="editor-canvas">
+      <div class="editor-canvas" id="editorCanvas">
         <div class="canvas-tabs">
           <button class="canvas-tab active" data-tab="content">Content</button>
           <button class="canvas-tab" data-tab="layout">Layout</button>
@@ -58,9 +75,63 @@
         </div>
         <div class="canvas-body" id="canvasBody"></div>
       </div>
+      <div class="editor-preview" id="editorPreview">
+        <div class="preview-bar">
+          <span class="preview-url mono" id="previewUrl"></span>
+          <div class="preview-actions">
+            <button class="btn btn-sm" id="pv-refresh" title="Refresh preview">↻</button>
+            <select class="select preview-vp" id="pv-vp">
+              <option value="desktop">Desktop</option>
+              <option value="tablet">Tablet</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+        </div>
+        <div class="preview-frame-wrap"><iframe class="preview-frame" id="previewFrame" title="Live preview"></iframe></div>
+      </div>
       <div class="editor-right" id="rightPanel"></div>
     </div>
   `));
+
+  applyViewMode();
+
+  function applyViewMode() {
+    const layout = document.getElementById('editorLayout');
+    if (!layout) return;
+    layout.dataset.mode = viewMode;
+    if (viewMode === 'split' || viewMode === 'preview') {
+      refreshPreviewFrame();
+    }
+  }
+
+  // Debounced preview refresh — updates sessionStorage preview snapshot then reloads iframe
+  let pvTimer = null;
+  function schedulePreviewRefresh() {
+    if (viewMode === 'form') return;
+    clearTimeout(pvTimer);
+    pvTimer = setTimeout(refreshPreviewFrame, 400);
+  }
+  function refreshPreviewFrame() {
+    const frame = document.getElementById('previewFrame');
+    const urlEl = document.getElementById('previewUrl');
+    if (!frame) return;
+    sessionStorage.setItem('sabdia.cms.preview', JSON.stringify({
+      pageId: page.id,
+      working,
+      meta: workingMeta,
+      generatedAt: Date.now()
+    }));
+    const slug = workingMeta.slug || page.slug;
+    const url = `../${slug}?cms_preview=1&_t=${Date.now()}`;
+    if (urlEl) urlEl.textContent = slug + ' · preview';
+    frame.src = url;
+  }
+
+  // Viewport switcher
+  document.getElementById('pv-vp').addEventListener('change', e => {
+    document.getElementById('editorPreview').dataset.vp = e.target.value;
+  });
+  document.getElementById('pv-refresh').addEventListener('click', refreshPreviewFrame);
 
   let activeTab = 'content';
   document.querySelectorAll('.canvas-tab').forEach(t => {
@@ -474,6 +545,7 @@
   function markDirty() {
     dirty = true;
     renderRightPanel();
+    schedulePreviewRefresh();
   }
 
   function saveDraft() {

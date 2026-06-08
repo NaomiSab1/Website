@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pages — Sabdia CMS</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<script src="js/admin-core.js"></script>
+<script src="js/admin-shell.js"></script>
+<script>
+(function () {
+  const newBtn = AdminShell.button('+ New Page', { primary: true, onClick: openNewPage });
+  if (!CMS.can('pages.create')) newBtn.style.display = 'none';
+
+  const content = AdminShell.mount('pages', {
+    title: 'Pages',
+    crumbs: ['Admin', 'Pages'],
+    actions: [newBtn]
+  });
+  if (!content) return;
+
+  render();
+
+  function render() {
+    const data = CMS.load();
+    let filter = 'all';
+    let query = '';
+
+    content.innerHTML = `
+      <div class="toolbar">
+        <input class="input" id="q" placeholder="Search pages by title or slug…">
+        <select class="select" id="filter" style="width:auto">
+          <option value="all">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
+        </select>
+        <div class="toolbar-spacer"></div>
+        <span class="small muted">${data.pages.length} page${data.pages.length === 1 ? '' : 's'}</span>
+      </div>
+      <div class="panel">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:34%">Page</th>
+              <th>Slug</th>
+              <th>Status</th>
+              <th>Layout</th>
+              <th>Sections</th>
+              <th>Updated</th>
+              <th style="text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    `;
+
+    const q       = document.getElementById('q');
+    const filterE = document.getElementById('filter');
+    const rows    = document.getElementById('rows');
+
+    function rerender() {
+      const data = CMS.load();
+      const list = data.pages.filter(p => {
+        if (filter !== 'all' && p.status !== filter) return false;
+        if (query) {
+          const q = query.toLowerCase();
+          if (!p.title.toLowerCase().includes(q) && !p.slug.toLowerCase().includes(q)) return false;
+        }
+        return true;
+      });
+
+      if (!list.length) {
+        rows.innerHTML = `<tr><td colspan="7"><div class="empty-state"><h3>No pages match</h3><p>Try a different filter or create a new page.</p></div></td></tr>`;
+        return;
+      }
+
+      rows.innerHTML = list.map(p => {
+        const statusClass = p.status === 'published' ? 'ok' : p.status === 'draft' ? 'draft' : 'archive';
+        const hasDraft = !!p.draftSections;
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:500">${CMS.escape(p.title)}</div>
+              ${hasDraft ? '<div class="tiny" style="color:var(--warn);margin-top:2px">● Unpublished changes</div>' : ''}
+            </td>
+            <td class="mono">${CMS.escape(p.slug)}</td>
+            <td><span class="badge dot ${statusClass}">${p.status}</span></td>
+            <td>${CMS.escape(p.layout)}</td>
+            <td>${p.sections.length}</td>
+            <td class="small muted">${CMS.relTime(p.updatedAt)} · ${CMS.escape(p.updatedBy || '')}</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-sm" data-act="edit" data-id="${p.id}">Edit</button>
+                ${CMS.can('pages.duplicate') ? `<button class="btn btn-sm" data-act="dup" data-id="${p.id}">Duplicate</button>` : ''}
+                ${CMS.can('pages.publish') ? `<button class="btn btn-sm" data-act="status" data-id="${p.id}">${p.status === 'published' ? 'Archive' : 'Publish'}</button>` : ''}
+                ${CMS.can('pages.delete') ? `<button class="btn btn-sm btn-danger" data-act="del" data-id="${p.id}">Delete</button>` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    q.addEventListener('input', () => { query = q.value; rerender(); });
+    filterE.addEventListener('change', () => { filter = filterE.value; rerender(); });
+
+    rows.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      if (act === 'edit') window.location.href = `editor.html?page=${encodeURIComponent(id)}`;
+      else if (act === 'dup') duplicatePage(id, rerender);
+      else if (act === 'del') deletePage(id, rerender);
+      else if (act === 'status') toggleStatus(id, rerender);
+    });
+
+    rerender();
+  }
+
+  function openNewPage() {
+    if (!CMS.gate('pages.create')) return;
+    const body = CMS.el(`<div>
+      <div class="field"><label class="label">Title</label><input class="input" id="np-title" placeholder="e.g. Studio Process"></div>
+      <div class="field"><label class="label">Slug / filename</label><input class="input mono" id="np-slug" placeholder="e.g. process.html"><div class="hint">Use lowercase with .html extension</div></div>
+      <div class="field"><label class="label">Layout</label><select class="select" id="np-layout">
+        ${CMS.LAYOUTS.map(l => `<option value="${l.id}">${l.label} — ${l.description}</option>`).join('')}
+      </select></div>
+      <div class="field"><label class="label">Starting status</label><select class="select" id="np-status">
+        <option value="draft">Draft</option><option value="published">Published</option>
+      </select></div>
+    </div>`);
+
+    CMS.modal({
+      title: 'Create new page',
+      body, confirmLabel: 'Create page',
+      onConfirm: () => {
+        const title  = body.querySelector('#np-title').value.trim();
+        const slug   = body.querySelector('#np-slug').value.trim() || (title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.html');
+        const layout = body.querySelector('#np-layout').value;
+        const status = body.querySelector('#np-status').value;
+        if (!title) { CMS.toast('Title is required', 'err'); return false; }
+        const id = 'p_' + Date.now().toString(36);
+        const data = CMS.load();
+        data.pages.push({
+          id, title, slug, layout, status,
+          sections: [
+            CMS.sec('hero', 'Hero', { eyebrow: 'New', title, subtitle: 'Edit this section to start your page.' }),
+            CMS.sec('text', 'Body', { heading: title, body: 'Write your content here.' })
+          ],
+          draftSections: null,
+          seo: { title, description: '', ogImage: '', keywords: '' },
+          createdAt: Date.now(), updatedAt: Date.now(),
+          updatedBy: CMS.currentSession().name
+        });
+        CMS.save(data);
+        CMS.logActivity('create', `Created page "${title}"`);
+        CMS.toast('Page created', 'ok');
+        window.location.href = `editor.html?page=${encodeURIComponent(id)}`;
+      }
+    });
+  }
+
+  function duplicatePage(id, onDone) {
+    const data = CMS.load();
+    const p = data.pages.find(x => x.id === id);
+    if (!p) return;
+    const copy = JSON.parse(JSON.stringify(p));
+    copy.id = 'p_' + Date.now().toString(36);
+    copy.title = p.title + ' (copy)';
+    copy.slug = p.slug.replace(/(\.html)?$/, '-copy.html');
+    copy.status = 'draft';
+    copy.createdAt = copy.updatedAt = Date.now();
+    copy.updatedBy = CMS.currentSession().name;
+    copy.draftSections = null;
+    data.pages.push(copy);
+    CMS.save(data);
+    CMS.logActivity('create', `Duplicated page "${p.title}"`);
+    CMS.toast('Page duplicated', 'ok');
+    onDone();
+  }
+
+  function deletePage(id, onDone) {
+    if (!CMS.gate('pages.delete')) return;
+    const data = CMS.load();
+    const p = data.pages.find(x => x.id === id);
+    if (!p) return;
+    CMS.confirmDialog(`Permanently delete "${p.title}"? This cannot be undone.`, () => {
+      CMS.snapshot(id, 'Pre-delete snapshot');
+      const fresh = CMS.load();
+      fresh.pages = fresh.pages.filter(x => x.id !== id);
+      CMS.save(fresh);
+      CMS.logActivity('edit', `Deleted page "${p.title}"`);
+      CMS.toast('Page deleted', 'ok');
+      onDone();
+    });
+  }
+
+  function toggleStatus(id, onDone) {
+    if (!CMS.gate('pages.publish')) return;
+    CMS.updatePage(id, p => {
+      p.status = p.status === 'published' ? 'archived' : 'published';
+    });
+    const p = CMS.getPage(id);
+    CMS.logActivity(p.status === 'published' ? 'publish' : 'edit', `${p.status === 'published' ? 'Published' : 'Archived'} "${p.title}"`);
+    CMS.toast(`Page ${p.status}`, 'ok');
+    onDone();
+  }
+})();
+</script>
+</body>
+</html>

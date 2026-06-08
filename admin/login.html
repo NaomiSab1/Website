@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Sabdia CMS</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="login-wrap">
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <div class="login-brand">
+      <h1>Sabdia CMS</h1>
+      <p>Admin Sign-in</p>
+    </div>
+    <div id="loginErr" style="display:none" class="login-err"></div>
+    <div class="field">
+      <label class="label" for="email">Email</label>
+      <input class="input" type="email" id="email" name="email" required autofocus>
+    </div>
+    <div class="field">
+      <label class="label" for="password">Password</label>
+      <input class="input" type="password" id="password" name="password" required>
+    </div>
+    <button class="btn btn-primary" type="submit">Sign in</button>
+    <div class="login-hint">
+      <strong>Demo credentials</strong><br>
+      Super Admin: <code>admin@sabdia.local</code> / <code>admin</code><br>
+      Editor: <code>editor@sabdia.local</code> / <code>editor</code>
+    </div>
+  </form>
+</div>
+
+<script src="js/admin-core.js"></script>
+<script>
+  // Redirect if already signed in
+  if (CMS.currentSession()) window.location.href = 'index.html';
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const err = document.getElementById('loginErr');
+    err.style.display = 'none';
+    const res = CMS.login(email, password);
+    if (res.ok) {
+      window.location.href = 'index.html';
+    } else {
+      err.textContent = res.error;
+      err.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>

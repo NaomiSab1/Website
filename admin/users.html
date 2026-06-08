@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Users &amp; Roles — Sabdia CMS</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<script src="js/admin-core.js"></script>
+<script src="js/admin-shell.js"></script>
+<script>
+(function () {
+  if (!CMS.can('users.view')) {
+    AdminShell.mount('dashboard', { title: 'Forbidden' });
+    document.getElementById('content').innerHTML = '<div class="empty-state"><h3>Access denied</h3><p>You need Super Admin permissions to manage users.</p></div>';
+    return;
+  }
+
+  const newBtn = AdminShell.button('+ New User', { primary: true, onClick: openNewUser });
+  const content = AdminShell.mount('users', {
+    title: 'Users & Roles',
+    crumbs: ['Admin', 'Users'],
+    actions: [newBtn]
+  });
+
+  const ROLES = [
+    { id: 'super',  label: 'Super Admin', desc: 'Full access — users, settings, all content.' },
+    { id: 'admin',  label: 'Admin',       desc: 'Manage pages, media, globals, publish, drafts. No user management.' },
+    { id: 'editor', label: 'Editor',      desc: 'Edit content and upload media. Cannot publish or manage globals.' }
+  ];
+
+  function render() {
+    const data = CMS.load();
+    const me = CMS.currentSession();
+    content.innerHTML = `
+      <div class="panel" style="margin-bottom:18px"><div class="panel-head"><h3 class="panel-title">Role definitions</h3></div><div class="panel-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          ${ROLES.map(r => `
+            <div style="background:var(--bg-3);padding:14px;border-radius:6px;border:1px solid var(--line)">
+              <div style="font-family:'Fraunces',serif;font-size:15px;margin-bottom:4px">${r.label}</div>
+              <div class="tiny muted">${r.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div></div>
+
+      <div class="panel">
+        <table class="table">
+          <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Created</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody id="urows"></tbody>
+        </table>
+      </div>
+    `;
+
+    const rows = document.getElementById('urows');
+    rows.innerHTML = data.users.map(u => `
+      <tr>
+        <td>
+          <div class="flex gap-sm"><div class="sb-avatar" style="width:28px;height:28px;font-size:11px">${(u.name||'?')[0]}</div><strong>${CMS.escape(u.name)}</strong>${u.id === me.userId ? ' <span class="badge">you</span>' : ''}</div>
+        </td>
+        <td class="mono">${CMS.escape(u.email)}</td>
+        <td><span class="badge dot ${u.role === 'super' ? 'ok' : u.role === 'admin' ? '' : 'draft'}">${u.role}</span></td>
+        <td class="small muted">${CMS.relTime(u.createdAt)}</td>
+        <td><div class="row-actions">
+          <button class="btn btn-sm" data-act="edit" data-id="${u.id}">Edit</button>
+          ${u.id !== me.userId ? `<button class="btn btn-sm btn-danger" data-act="del" data-id="${u.id}">Delete</button>` : ''}
+        </div></td>
+      </tr>
+    `).join('');
+
+    rows.querySelectorAll('button[data-act]').forEach(b => b.addEventListener('click', () => {
+      if (b.dataset.act === 'edit') editUser(b.dataset.id);
+      else if (b.dataset.act === 'del') deleteUser(b.dataset.id);
+    }));
+  }
+
+  function openNewUser() {
+    const body = CMS.el(`<div>
+      <div class="field"><label class="label">Name</label><input class="input" id="u-name"></div>
+      <div class="field"><label class="label">Email</label><input class="input" id="u-email" type="email"></div>
+      <div class="field"><label class="label">Password</label><input class="input" id="u-pw" type="password"></div>
+      <div class="field"><label class="label">Role</label><select class="select" id="u-role">
+        ${ROLES.map(r => `<option value="${r.id}">${r.label}</option>`).join('')}
+      </select></div>
+    </div>`);
+    CMS.modal({
+      title: 'Create user', body,
+      confirmLabel: 'Create user',
+      onConfirm: () => {
+        const name = body.querySelector('#u-name').value.trim();
+        const email = body.querySelector('#u-email').value.trim().toLowerCase();
+        const pw = body.querySelector('#u-pw').value;
+        const role = body.querySelector('#u-role').value;
+        if (!name || !email || !pw) { CMS.toast('All fields required', 'err'); return false; }
+        const data = CMS.load();
+        if (data.users.find(u => u.email.toLowerCase() === email)) { CMS.toast('Email already in use', 'err'); return false; }
+        data.users.push({ id: 'u_' + Date.now().toString(36), name, email, password: pw, role, createdAt: Date.now() });
+        CMS.save(data);
+        CMS.logActivity('edit', `Created user ${name} (${role})`);
+        CMS.toast('User created', 'ok');
+        render();
+      }
+    });
+  }
+
+  function editUser(id) {
+    const data = CMS.load();
+    const u = data.users.find(x => x.id === id);
+    if (!u) return;
+    const body = CMS.el(`<div>
+      <div class="field"><label class="label">Name</label><input class="input" id="u-name" value="${CMS.escape(u.name)}"></div>
+      <div class="field"><label class="label">Email</label><input class="input" id="u-email" value="${CMS.escape(u.email)}"></div>
+      <div class="field"><label class="label">Role</label><select class="select" id="u-role">
+        ${ROLES.map(r => `<option value="${r.id}" ${u.role === r.id ? 'selected' : ''}>${r.label}</option>`).join('')}
+      </select></div>
+      <div class="field"><label class="label">New password (leave blank to keep)</label><input class="input" id="u-pw" type="password"></div>
+    </div>`);
+    CMS.modal({
+      title: 'Edit user', body,
+      onConfirm: () => {
+        u.name = body.querySelector('#u-name').value.trim() || u.name;
+        u.email = body.querySelector('#u-email').value.trim() || u.email;
+        u.role = body.querySelector('#u-role').value;
+        const pw = body.querySelector('#u-pw').value;
+        if (pw) u.password = pw;
+        CMS.save(data);
+        CMS.logActivity('edit', `Updated user ${u.name}`);
+        CMS.toast('User updated', 'ok');
+        render();
+      }
+    });
+  }
+
+  function deleteUser(id) {
+    const data = CMS.load();
+    const u = data.users.find(x => x.id === id);
+    if (!u) return;
+    CMS.confirmDialog(`Delete user "${u.name}"? They will no longer be able to sign in.`, () => {
+      const fresh = CMS.load();
+      fresh.users = fresh.users.filter(x => x.id !== id);
+      CMS.save(fresh);
+      CMS.logActivity('edit', `Deleted user ${u.name}`);
+      CMS.toast('User deleted', 'ok');
+      render();
+    });
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

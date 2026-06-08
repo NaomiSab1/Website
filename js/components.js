@@ -7,6 +7,14 @@
 (function () {
   const base = document.documentElement.dataset.base || document.body.dataset.base || '';
 
+  // ----- CMS overrides (optional) -----
+  // The CMS runtime exposes window.__CMS__ if admin content is configured.
+  const CMS_G   = (window.__CMS__ || {});
+  const NAV     = (CMS_G.nav    && CMS_G.nav.length) ? CMS_G.nav : null;
+  const NAV_CTA = CMS_G.navCTA || null;
+  const FOOTER  = CMS_G.footer || null;
+  const escAttr = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
   /* ── NAV ── */
   const navHTML = `
 <div id="cur"></div>
@@ -47,15 +55,17 @@
          alt="Sabdia Constructions">
   </a>
   <ul class="nav-center">
-    <li><a href="${base}properties/">For Sale</a></li>
+    ${NAV
+      ? NAV.map(i => `<li><a href="${escAttr(base + i.href)}">${escAttr(i.label)}</a></li>`).join('')
+      : `<li><a href="${base}properties/">For Sale</a></li>
     <li><a href="${base}services.html">Services</a></li>
     <li><a href="${base}about.html">About</a></li>
     <li><a href="${base}projects.html">Projects</a></li>
     <li><a href="${base}collection.html">Collection</a></li>
-    <li><a href="${base}agent-access.html">Agent Access</a></li>
+    <li><a href="${base}agent-access.html">Agent Access</a></li>`}
   </ul>
   <div class="nav-right">
-    <a href="${base}contact.html" class="nav-cta">Enquire</a>
+    <a href="${escAttr(base + (NAV_CTA ? NAV_CTA.href : 'contact.html'))}" class="nav-cta">${escAttr(NAV_CTA ? NAV_CTA.label : 'Enquire')}</a>
     <button class="mob-btn" id="mobBtn" aria-label="Menu"><span></span><span></span></button>
   </div>
 </nav>`;
@@ -65,8 +75,8 @@
 <footer>
   <div class="footer-tagline">
     <div class="footer-tagline-inner">
-      <h2 class="footer-tag-h">Design. <em>Develop.</em><br>Construct.</h2>
-      <p class="footer-tag-sub">Boutique luxury home builder &amp; developer delivering award-winning residences across inner Brisbane since 2013.</p>
+      <h2 class="footer-tag-h">${FOOTER && FOOTER.tagline ? escAttr(FOOTER.tagline).replace(/Develop\./, '<em>Develop.</em>') : 'Design. <em>Develop.</em><br>Construct.'}</h2>
+      <p class="footer-tag-sub">${FOOTER && FOOTER.sub ? escAttr(FOOTER.sub) : 'Boutique luxury home builder &amp; developer delivering award-winning residences across inner Brisbane since 2013.'}</p>
     </div>
   </div>
   <div class="fg-grid">
@@ -119,7 +129,7 @@
     </div>
   </div>
   <div class="fbot">
-    <div class="fcopy">&copy; 2025 Sabdia Constructions Pty Ltd. All rights reserved.</div>
+    <div class="fcopy">${FOOTER && FOOTER.copyright ? escAttr(FOOTER.copyright) : '&copy; 2025 Sabdia Constructions Pty Ltd. All rights reserved.'}</div>
     <div class="flinks">
       <a href="${base}contact.html">Accessibility</a>
       <a href="${base}contact.html">Privacy Policy</a>

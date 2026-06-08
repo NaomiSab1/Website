@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Sabdia CMS</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<script src="js/admin-core.js"></script>
+<script src="js/admin-shell.js"></script>
+<script>
+(function () {
+  if (!CMS.can('settings.edit')) {
+    AdminShell.mount('dashboard', { title: 'Forbidden' });
+    document.getElementById('content').innerHTML = '<div class="empty-state"><h3>Access denied</h3><p>Super Admin role required.</p></div>';
+    return;
+  }
+
+  const content = AdminShell.mount('settings', {
+    title: 'Settings',
+    crumbs: ['Admin', 'Settings']
+  });
+
+  content.innerHTML = `
+    <div class="panel" style="margin-bottom:14px"><div class="panel-head"><h3 class="panel-title">Backup &amp; Restore</h3></div><div class="panel-body">
+      <p class="small muted" style="margin-bottom:14px">CMS data is stored locally in your browser. Export to back up, import to restore on another machine.</p>
+      <div class="flex gap-sm">
+        <button class="btn" id="exp">Export CMS Data (JSON)</button>
+        <label class="btn" for="impFile">Import CMS Data</label>
+        <input type="file" id="impFile" accept="application/json" style="display:none">
+      </div>
+    </div></div>
+
+    <div class="panel" style="margin-bottom:14px"><div class="panel-head"><h3 class="panel-title">Publishing</h3></div><div class="panel-body">
+      <p class="small muted">When you publish a page, changes apply immediately to the live site (via the CMS runtime included on each page).</p>
+      <div class="flex gap-sm" style="margin-top:12px">
+        <a class="btn" href="../index.html" target="_blank">Open live site</a>
+      </div>
+    </div></div>
+
+    <div class="panel"><div class="panel-head"><h3 class="panel-title">Danger Zone</h3></div><div class="panel-body">
+      <p class="small muted" style="margin-bottom:14px">Reset all CMS content to default values. This cannot be undone — export your data first.</p>
+      <button class="btn btn-danger" id="reset">Reset all CMS data</button>
+    </div></div>
+  `;
+
+  document.getElementById('exp').addEventListener('click', () => { CMS.exportJSON(); CMS.toast('Export downloaded', 'ok'); });
+  document.getElementById('impFile').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    CMS.importJSON(f, (ok, err) => {
+      if (ok) { CMS.toast('Import successful', 'ok'); setTimeout(() => location.reload(), 600); }
+      else CMS.toast('Import failed: ' + (err || 'invalid file'), 'err');
+    });
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    if (CMS.reset()) { CMS.toast('Reset complete', 'ok'); setTimeout(() => location.href = 'login.html', 600); }
+  });
+})();
+</script>
+</body>
+</html>

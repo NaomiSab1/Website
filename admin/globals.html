@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Content — Sabdia CMS</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<script src="js/admin-core.js"></script>
+<script src="js/admin-shell.js"></script>
+<script>
+(function () {
+  const saveBtn = AdminShell.button('Save Changes', { primary: true, onClick: saveAll });
+  if (!CMS.can('globals.edit')) saveBtn.style.display = 'none';
+
+  const content = AdminShell.mount('globals', {
+    title: 'Global Content',
+    crumbs: ['Admin', 'Globals'],
+    actions: [saveBtn]
+  });
+  if (!content) return;
+
+  let data = CMS.load();
+  const canEdit = CMS.can('globals.edit');
+
+  if (!canEdit) {
+    content.appendChild(CMS.el('<div class="permission-warning">You have read-only access to global content.</div>'));
+  }
+
+  content.appendChild(CMS.el(`
+    <div class="tabs">
+      <button class="tab active" data-tab="site">Site</button>
+      <button class="tab" data-tab="nav">Navigation</button>
+      <button class="tab" data-tab="footer">Footer</button>
+      <button class="tab" data-tab="contact">Contact</button>
+      <button class="tab" data-tab="cta">Site CTA</button>
+    </div>
+    <div id="tabBody"></div>
+  `));
+
+  let active = 'site';
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    active = t.dataset.tab;
+    render();
+  }));
+
+  function render() {
+    const host = document.getElementById('tabBody');
+    host.innerHTML = '';
+    if (active === 'site') return renderSite(host);
+    if (active === 'nav') return renderNav(host);
+    if (active === 'footer') return renderFooter(host);
+    if (active === 'contact') return renderContact(host);
+    if (active === 'cta') return renderCTA(host);
+  }
+
+  function ro() { return canEdit ? '' : 'readonly'; }
+
+  function bind(input, target, key) {
+    input.addEventListener('input', e => { target[key] = e.target.value; });
+  }
+
+  function renderSite(host) {
+    const panel = CMS.el(`<div class="panel"><div class="panel-body">
+      <div class="field"><label class="label">Site name</label><input class="input" id="s-name" ${ro()} value="${CMS.escape(data.site.name)}"></div>
+      <div class="field"><label class="label">Tagline</label><input class="input" id="s-tag" ${ro()} value="${CMS.escape(data.site.tagline)}"></div>
+      <div class="field"><label class="label">Logo URL</label>
+        <div class="flex gap-sm"><input class="input" id="s-logo" ${ro()} value="${CMS.escape(data.site.logo)}"></div>
+        <div style="margin-top:8px"><img src="${CMS.escape(data.site.logo)}" style="max-height:48px;background:var(--bg-3);padding:8px;border-radius:4px"></div>
+      </div>
+      <div class="field"><label class="label">Theme color</label><input class="input" id="s-theme" ${ro()} value="${CMS.escape(data.site.themeColor)}"></div>
+    </div></div>`);
+    host.appendChild(panel);
+    bind(panel.querySelector('#s-name'), data.site, 'name');
+    bind(panel.querySelector('#s-tag'), data.site, 'tagline');
+    bind(panel.querySelector('#s-logo'), data.site, 'logo');
+    bind(panel.querySelector('#s-theme'), data.site, 'themeColor');
+  }
+
+  function renderNav(host) {
+    const panel = CMS.el(`<div class="panel"><div class="panel-head"><h3 class="panel-title">Primary navigation</h3>${canEdit ? '<button class="btn btn-sm" id="addLink">+ Add link</button>' : ''}</div><div class="panel-body" id="nav-body"></div></div>
+    <div class="panel" style="margin-top:14px"><div class="panel-head"><h3 class="panel-title">Header CTA</h3></div><div class="panel-body">
+      <div class="field-row">
+        <div class="field"><label class="label">Label</label><input class="input" id="cta-l" ${ro()} value="${CMS.escape(data.navCTA.label)}"></div>
+        <div class="field"><label class="label">Link</label><input class="input" id="cta-h" ${ro()} value="${CMS.escape(data.navCTA.href)}"></div>
+      </div>
+    </div></div>`);
+    host.appendChild(panel);
+
+    function drawLinks() {
+      const body = host.querySelector('#nav-body');
+      body.innerHTML = '';
+      data.nav.forEach((item, i) => {
+        const row = CMS.el(`<div style="display:grid;grid-template-columns:1fr 2fr auto auto;gap:10px;margin-bottom:8px;align-items:center">
+          <input class="input" placeholder="Label" ${ro()} value="${CMS.escape(item.label)}">
+          <input class="input mono" placeholder="Link" ${ro()} value="${CMS.escape(item.href)}">
+          ${canEdit ? `<button class="btn btn-sm" data-act="up" title="Move up">▲</button><button class="btn btn-sm btn-danger" data-act="del">✕</button>` : ''}
+        </div>`);
+        const inputs = row.querySelectorAll('input');
+        inputs[0].addEventListener('input', e => item.label = e.target.value);
+        inputs[1].addEventListener('input', e => item.href = e.target.value);
+        const up = row.querySelector('[data-act="up"]');
+        if (up) up.addEventListener('click', () => {
+          if (i === 0) return;
+          [data.nav[i-1], data.nav[i]] = [data.nav[i], data.nav[i-1]];
+          drawLinks();
+        });
+        const del = row.querySelector('[data-act="del"]');
+        if (del) del.addEventListener('click', () => { data.nav.splice(i, 1); drawLinks(); });
+        body.appendChild(row);
+      });
+    }
+    drawLinks();
+    const add = panel.querySelector('#addLink');
+    if (add) add.addEventListener('click', () => { data.nav.push({ label: 'New', href: '#' }); drawLinks(); });
+
+    bind(panel.querySelector('#cta-l'), data.navCTA, 'label');
+    bind(panel.querySelector('#cta-h'), data.navCTA, 'href');
+  }
+
+  function renderFooter(host) {
+    const panel = CMS.el(`<div class="panel"><div class="panel-body">
+      <div class="field"><label class="label">Footer tagline</label><input class="input" id="f-tag" ${ro()} value="${CMS.escape(data.footer.tagline)}"></div>
+      <div class="field"><label class="label">Footer sub</label><textarea class="textarea" id="f-sub" ${ro()}>${CMS.escape(data.footer.sub)}</textarea></div>
+      <div class="field"><label class="label">Copyright</label><input class="input" id="f-cp" ${ro()} value="${CMS.escape(data.footer.copyright)}"></div>
+    </div></div>`);
+    host.appendChild(panel);
+    bind(panel.querySelector('#f-tag'), data.footer, 'tagline');
+    bind(panel.querySelector('#f-sub'), data.footer, 'sub');
+    bind(panel.querySelector('#f-cp'), data.footer, 'copyright');
+  }
+
+  function renderContact(host) {
+    const panel = CMS.el(`<div class="panel"><div class="panel-body">
+      <div class="field-row">
+        <div class="field"><label class="label">Email</label><input class="input" id="c-email" ${ro()} value="${CMS.escape(data.contact.email)}"></div>
+        <div class="field"><label class="label">Phone</label><input class="input" id="c-phone" ${ro()} value="${CMS.escape(data.contact.phone || '')}"></div>
+      </div>
+      <div class="field"><label class="label">Address</label><input class="input" id="c-addr" ${ro()} value="${CMS.escape(data.contact.address)}"></div>
+      <div class="divider"></div>
+      <div class="field"><label class="label">Instagram URL</label><input class="input" id="c-ig" ${ro()} value="${CMS.escape(data.contact.instagram || '')}"></div>
+      <div class="field"><label class="label">Facebook URL</label><input class="input" id="c-fb" ${ro()} value="${CMS.escape(data.contact.facebook || '')}"></div>
+      <div class="field"><label class="label">LinkedIn URL</label><input class="input" id="c-li" ${ro()} value="${CMS.escape(data.contact.linkedin || '')}"></div>
+    </div></div>`);
+    host.appendChild(panel);
+    bind(panel.querySelector('#c-email'), data.contact, 'email');
+    bind(panel.querySelector('#c-phone'), data.contact, 'phone');
+    bind(panel.querySelector('#c-addr'), data.contact, 'address');
+    bind(panel.querySelector('#c-ig'), data.contact, 'instagram');
+    bind(panel.querySelector('#c-fb'), data.contact, 'facebook');
+    bind(panel.querySelector('#c-li'), data.contact, 'linkedin');
+  }
+
+  function renderCTA(host) {
+    const panel = CMS.el(`<div class="panel"><div class="panel-head"><h3 class="panel-title">Site-wide CTA</h3></div><div class="panel-body">
+      <p class="small muted">Used on home, about, services, and project pages.</p>
+      <div class="field"><label class="label">Heading</label><input class="input" id="cta-h" ${ro()} value="${CMS.escape(data.siteCTA.heading)}"></div>
+      <div class="field"><label class="label">Sub heading</label><textarea class="textarea" id="cta-s" ${ro()}>${CMS.escape(data.siteCTA.sub)}</textarea></div>
+      <div class="field-row">
+        <div class="field"><label class="label">Primary label</label><input class="input" id="cta-p-l" ${ro()} value="${CMS.escape(data.siteCTA.primary.label)}"></div>
+        <div class="field"><label class="label">Primary link</label><input class="input" id="cta-p-h" ${ro()} value="${CMS.escape(data.siteCTA.primary.href)}"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label class="label">Secondary label</label><input class="input" id="cta-s-l" ${ro()} value="${CMS.escape(data.siteCTA.secondary.label)}"></div>
+        <div class="field"><label class="label">Secondary link</label><input class="input" id="cta-s-h" ${ro()} value="${CMS.escape(data.siteCTA.secondary.href)}"></div>
+      </div>
+    </div></div>`);
+    host.appendChild(panel);
+    bind(panel.querySelector('#cta-h'), data.siteCTA, 'heading');
+    bind(panel.querySelector('#cta-s'), data.siteCTA, 'sub');
+    bind(panel.querySelector('#cta-p-l'), data.siteCTA.primary, 'label');
+    bind(panel.querySelector('#cta-p-h'), data.siteCTA.primary, 'href');
+    bind(panel.querySelector('#cta-s-l'), data.siteCTA.secondary, 'label');
+    bind(panel.querySelector('#cta-s-h'), data.siteCTA.secondary, 'href');
+  }
+
+  function saveAll() {
+    if (!CMS.gate('globals.edit')) return;
+    CMS.save(data);
+    CMS.logActivity('edit', 'Global content updated');
+    CMS.toast('Global content saved', 'ok');
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

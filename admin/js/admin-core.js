@@ -145,6 +145,7 @@
     ],
     media: [],
     users: [
+      { id: 'u_naomi', email: 'naomi@sabdia.com.au', name: 'Naomi', role: 'super', password: 'sabdia2025', createdAt: Date.now() },
       { id: 'u_root', email: 'admin@sabdia.local', name: 'Super Admin', role: 'super', password: 'admin', createdAt: Date.now() },
       { id: 'u_editor', email: 'editor@sabdia.local', name: 'Demo Editor', role: 'editor', password: 'editor', createdAt: Date.now() }
     ],

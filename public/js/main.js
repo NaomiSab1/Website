@@ -1,8 +1,23 @@
 /* ============================================================
-   SABDIA CONSTRUCTIONS — MAIN JS (v2)
+   SABDIA CONSTRUCTIONS — MAIN JS (v3)
    ============================================================ */
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ── BRISBANE CLOCK (UTC+10, no DST) ─────────────────────────
+const fmtBris = () => {
+  try {
+    return new Intl.DateTimeFormat('en-AU', {
+      timeZone: 'Australia/Brisbane',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    }).format(new Date()) + ' BNE';
+  } catch (e) { return 'BNE'; }
+};
+const navTime = document.getElementById('navTime');
+if (navTime) {
+  navTime.textContent = fmtBris();
+  setInterval(() => { navTime.textContent = fmtBris(); }, 30000);
+}
 
 // ── LOADER ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
@@ -35,7 +50,7 @@ if (window.matchMedia('(pointer: fine)').matches && !reduceMotion) {
       curR.style.left = rx + 'px'; curR.style.top = ry + 'px';
       requestAnimationFrame(animate);
     })();
-    const hov = 'a,button,.pc,.svc-item,.sc-card,.col-item,.proj-card,.about-val,input,textarea,select';
+    const hov = 'a,button,.pc,.svc-item,.sc-card,.col-item,.proj-card,.about-val,.port-card,input,textarea,select';
     document.querySelectorAll(hov).forEach(el => {
       el.addEventListener('mouseenter', () => document.body.classList.add('ch'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('ch'));
@@ -193,18 +208,28 @@ if (window.matchMedia('(pointer: fine)').matches && !reduceMotion) {
   });
 }
 
-// ── CONTACT FORMS ───────────────────────────────────────────
+// ── CONTACT FORMS — submit to Netlify Forms via AJAX ────────
 document.querySelectorAll('form#cform, form.cform').forEach(cform => {
-  cform.addEventListener('submit', e => {
+  cform.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = cform.querySelector('#fsub, .fsub');
-    if (!btn) return;
+    if (!btn || btn.disabled) return;
     btn.textContent = 'Sending…';
     btn.style.background = '#6B6860';
-    setTimeout(() => {
+    try {
+      const body = new URLSearchParams(new FormData(cform)).toString();
+      const res = await fetch(window.location.pathname, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      if (!res.ok) throw new Error(`Form submit failed: ${res.status}`);
       btn.textContent = 'Thank you — we\'ll be in touch shortly.';
       btn.style.background = 'var(--ink2)';
       btn.disabled = true;
-    }, 1200);
+    } catch (err) {
+      btn.textContent = 'Something went wrong — please try again.';
+      btn.style.background = '';
+    }
   });
 });

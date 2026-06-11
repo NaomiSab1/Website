@@ -1,0 +1,49 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+site_url: https://www.sabdiaconstructions.com.au
+
+collections:
+  - name: properties
+    label: Properties
+    label_singular: Property
+    folder: src/content/properties
+    create: true
+    slug: "{{slug}}"
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Name, widget: string, hint: "Property name, e.g. QASR" }
+      - { name: order, label: Display Order, widget: number, value_type: int, hint: "Lower numbers appear first. The lowest-ordered For Sale property becomes the featured listing." }
+      - name: status
+        label: Status
+        widget: select
+        options:
+          - { label: "For Sale", value: for-sale }
+          - { label: "Sold Prior to Completion", value: sold }
+      - { name: suburb, label: Suburb, widget: string }
+      - { name: state, label: State, widget: string, default: Queensland }
+      - { name: year, label: Year, widget: number, value_type: int }
+      - { name: beds, label: Bedrooms, widget: number, value_type: int }
+      - { name: baths, label: Bathrooms, widget: number, value_type: int }
+      - { name: cars, label: Garages, widget: number, value_type: int }
+      - { name: land, label: "Land Size (m²)", widget: number, value_type: int }
+      - { name: landOver, label: "Land size is a minimum (adds +)", widget: boolean, default: false, required: false }
+      - { name: image, label: "Hero Image URL", widget: string, hint: "Full image URL (used for the hero and all listing cards)" }
+      - { name: focus, label: "Image Focal Point", widget: string, required: false, default: "", hint: "Optional Wix focal point parameter, e.g. fp_0.5_0.65" }
+      - { name: headline, label: Headline, widget: string, hint: "May contain <br> and <em> HTML tags" }
+      - { name: seoDescription, label: "SEO Description", widget: text }
+      - { name: features, label: "Key Features", widget: list, field: { name: feature, label: Feature, widget: string } }
+      - name: gallery
+        label: Gallery
+        widget: list
+        fields:
+          - { name: src, label: "Image URL", widget: string }
+          - { name: alt, label: "Alt Text", widget: string }
+      - { name: enquiryHeading, label: "Enquiry Box Heading", widget: string }
+      - { name: enquiryText, label: "Enquiry Box Text", widget: text }
+      - { name: enquiryButton, label: "Enquiry Button Label", widget: string, default: "Submit Enquiry" }
+      - { name: body, label: Description, widget: markdown, hint: "The property description — each paragraph is rendered separately on the page" }

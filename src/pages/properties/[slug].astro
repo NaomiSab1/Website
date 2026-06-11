@@ -1,22 +1,20 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PropertyCard from '../../components/PropertyCard.astro';
 import { wixResize, landLabel } from '../../lib/wix.js';
+import { getProperties, getProperty } from '../../lib/db.js';
 
-export async function getStaticPaths() {
-  const properties = await getCollection('properties');
-  return properties.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+const entry = await getProperty(Astro.params.slug);
+if (!entry) {
+  return new Response('Not found', { status: 404 });
 }
-
-const { entry } = Astro.props;
 const d = entry.data;
 const sold = d.status === 'sold';
 const statusLabel = sold ? 'Sold Prior to Completion' : 'For Sale';
 
 const paragraphs = entry.body.trim().split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
-const allProps = await getCollection('properties');
+const allProps = await getProperties();
 const related = allProps
   .filter((p) => p.data.status === 'for-sale' && p.id !== entry.id)
   .sort((a, b) => a.data.order - b.data.order)

@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import SoldCard from '../components/SoldCard.astro';
 import { landLabel, countWord } from '../lib/wix.js';
+import { getProperties } from '../lib/db.js';
 
-const all = (await getCollection('properties')).sort((a, b) => a.data.order - b.data.order);
+const all = await getProperties();
 const forSale = all.filter((p) => p.data.status === 'for-sale');
 const sold = all.filter((p) => p.data.status === 'sold');
 

@@ -1,93 +1,93 @@
 # Sabdia Constructions — Website
 
-Marketing site for Sabdia Constructions, built with [Astro](https://astro.build)
-and deployed on [Vercel](https://vercel.com). The site is statically generated
-for speed and SEO, but content is fully data-driven: properties live in a
-content collection and can be edited through a CMS without touching any HTML.
+Marketing site for Sabdia Constructions, built with [Astro](https://astro.build),
+backed by a [Supabase](https://supabase.com) database, and deployed on
+[Vercel](https://vercel.com).
+
+- **Properties live in Supabase** — edit a row in the `properties` table and
+  the website updates immediately (pages are server-rendered, no rebuild).
+- **Enquiries are saved to Supabase** — every form submission (contact,
+  property enquiry, agent application) lands in the `enquiries` table, and can
+  optionally be emailed to you via Resend.
+- If Supabase isn't configured yet, the site still works: it renders from the
+  bundled seed data in `src/lib/seed-properties.json`.
 
 ## Development
 
 ```bash
 npm install
 npm run dev      # local dev server at http://localhost:4321
-npm run build    # production build into dist/
-npm run preview  # preview the production build
+npm run build    # production build
 ```
 
 ## Project structure
 
 ```
 src/
-  content/properties/   # one markdown file per property (the CMS edits these)
-  content.config.ts     # property schema (validated at build time)
-  layouts/Base.astro    # shared <head>, nav, footer
-  components/           # Nav, Footer, PropertyCard, SoldCard
   pages/                # one .astro file per page
-  pages/properties/     # listing page + [slug].astro template per property
-  lib/wix.js            # Wix image-resize helper + small utils
-public/
-  css/, js/             # styles and client-side JS, served as-is
-  admin/                # Decap CMS (content editor UI at /admin/)
-api/
-  contact.js            # form submissions → email via Resend
-  auth.js, callback.js  # GitHub OAuth for the CMS login
-vercel.json             # trailing slashes + redirects from old .html URLs
+  pages/properties/     # listing page + [slug].astro (one template, every property)
+  pages/api/contact.ts  # form endpoint → Supabase enquiries (+ optional email)
+  components/           # Nav, Footer, PropertyCard, SoldCard
+  layouts/Base.astro    # shared <head>, nav, footer
+  lib/db.js             # property data layer (Supabase, with seed fallback)
+  lib/seed-properties.json
+  content/properties/   # original markdown content (source for the seed)
+supabase/
+  schema.sql            # tables + row-level security policies
+  seed.sql              # inserts the current six properties
+public/                 # css, js, static assets
+scripts/properties-to-seed.mjs  # regenerates seed JSON/SQL from the markdown
+vercel.json             # 301 redirects from the old .html URLs
 ```
 
-## Deploying on Vercel
+## One-time setup
 
-1. Go to [vercel.com](https://vercel.com) → **Add New… → Project** and import
-   the `NaomiSab1/Website` GitHub repository.
-2. Vercel auto-detects Astro — no build settings needed. Click **Deploy**.
-3. Every push to `main` deploys to production; every branch/PR gets its own
-   preview URL automatically.
-4. Add your custom domain (e.g. `www.sabdiaconstructions.com.au`) under
-   **Settings → Domains**.
+### 1. Supabase
 
-### Environment variables (Settings → Environment Variables)
+1. Create a project at [supabase.com](https://supabase.com) (free tier is fine).
+2. In the project, open **SQL Editor** and run the contents of
+   `supabase/schema.sql`, then `supabase/seed.sql`.
+3. Copy from **Project Settings → API**:
+   - Project URL → `SUPABASE_URL`
+   - `anon` `public` key → `SUPABASE_ANON_KEY`
+   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (keep secret)
 
-| Variable | Purpose |
-| --- | --- |
-| `RESEND_API_KEY` | API key from [resend.com](https://resend.com) — powers the contact/enquiry forms |
-| `CONTACT_EMAIL` | Address that receives form submissions |
-| `CONTACT_FROM` | Optional verified sender, e.g. `Sabdia Website <noreply@sabdiaconstructions.com.au>` |
-| `OAUTH_GITHUB_CLIENT_ID` | GitHub OAuth App client ID — powers the CMS login |
-| `OAUTH_GITHUB_CLIENT_SECRET` | GitHub OAuth App client secret |
+### 2. Vercel
+
+1. [vercel.com](https://vercel.com) → **Add New… → Project** → import
+   `NaomiSab1/Website`. Astro is auto-detected.
+2. Under **Settings → Environment Variables**, add the three Supabase
+   variables above (and optionally the Resend ones below), then redeploy.
+3. Add your custom domain under **Settings → Domains**.
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `SUPABASE_URL` | yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | yes | Public read access to properties |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes | Server-side insert of enquiries |
+| `RESEND_API_KEY` | optional | Email a copy of each enquiry ([resend.com](https://resend.com)) |
+| `CONTACT_EMAIL` | optional | Address that receives those emails |
+| `CONTACT_FROM` | optional | Verified sender address |
 
 ## Editing properties
 
-Each property is a markdown file in `src/content/properties/` with frontmatter
-(name, suburb, status, beds/baths/cars, land size, images, features, …) and the
-description as the body. Adding a file adds the property **everywhere** —
-the listing page, the home page grid, the projects page, the footer, the
-contact form's enquiry options — and generates its detail page at
-`/properties/<slug>/`.
+Open Supabase → **Table Editor → properties**. Each row is one property; the
+site reads them live, ordered by `display_order`.
 
-Set `status: sold` to move a property into the "Sold Prior to Completion"
-sections and switch its detail page to the sold layout.
+- Add a row → the property appears everywhere (listing page, home page grid,
+  projects page, footer, contact-form options) and gets a page at
+  `/properties/<slug>/`.
+- Set `status` to `sold` → it moves to the "Sold Prior to Completion"
+  sections and its page switches to the sold layout.
+- `features` and `gallery` are JSON columns — copy an existing row's format.
+- The `headline` may contain `<br>` and `<em>` tags.
 
-### CMS (Decap) setup
+Enquiries arrive in **Table Editor → enquiries**, newest first.
 
-`/admin/` hosts Decap CMS configured against `src/content/properties`.
-Saving in the CMS commits to GitHub, which triggers a Vercel redeploy.
+## Versions
 
-One-time setup:
+Site versions are marked with git tags:
 
-1. Create a **GitHub OAuth App** (GitHub → Settings → Developer settings →
-   OAuth Apps → New):
-   - Homepage URL: your site URL
-   - Authorization callback URL: `https://<your-domain>/api/callback`
-2. Put the client ID/secret in the Vercel env vars above and redeploy.
-3. Make sure `base_url` in `public/admin/config.yml` matches your deployed
-   site URL.
-
-Editors log in at `/admin/` with their GitHub account; they need write access
-to this repository.
-
-## Forms
-
-All forms (contact, property enquiry, agent application) post to
-`/api/contact`, a Vercel serverless function that emails submissions via
-[Resend](https://resend.com) (free tier is plenty for a contact form).
-A honeypot field filters out basic spam bots. Until `RESEND_API_KEY` and
-`CONTACT_EMAIL` are configured, submissions return an error.
+- `v1.0-static` — original hand-written HTML site
+- `v2.0-astro` — Astro rebuild, markdown content + Decap CMS
+- `v3.0-astro-supabase` — Astro + Supabase database (current)

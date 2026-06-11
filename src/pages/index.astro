@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import SoldCard from '../components/SoldCard.astro';
-import { landLabel, countWord } from '../lib/wix.js';
+import { landLabel } from '../lib/wix.js';
 import { getProperties } from '../lib/db.js';
 
 const all = await getProperties();
@@ -15,6 +15,14 @@ const smallB = forSale[2];
 const restRow = forSale.slice(3);
 
 const heroPreload = 'https://static.wixstatic.com/media/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_85/1cc2db_4e48586f78704fc3ae5d00ddb8a125ee~mv2.jpg';
+
+const mqItems = [
+  'Multi-Award Winning',
+  'Design · Develop · Construct',
+  'Inner Brisbane Specialist',
+  '100+ Residences Since 2013',
+  'Boutique Luxury Developer',
+];
 
 const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
@@ -46,82 +54,86 @@ const jsonLd = JSON.stringify({
   <script type="application/ld+json" slot="head" is:inline set:html={jsonLd} />
 
   <!-- HERO -->
-  <header class="hero" id="hero">
+  <section class="hero" id="hero">
     <div class="h-slides" id="hSlides">
-      <div class="h-slide active" data-name="QASR · Coorparoo">
-        <img src={heroPreload} alt="Sabdia luxury residence — QASR, Coorparoo" loading="eager" fetchpriority="high">
+      <div class="h-slide active">
+        <img src={heroPreload} alt="Sabdia luxury home" loading="eager" fetchpriority="high">
       </div>
-      <div class="h-slide" data-name="SOLACE · Camp Hill">
-        <img src="https://static.wixstatic.com/media/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_85/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg" alt="Sabdia luxury residence — SOLACE, Camp Hill" loading="lazy">
+      <div class="h-slide">
+        <img src="https://static.wixstatic.com/media/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_85/1cc2db_9e730867446c414c9fe72c1549cb7261~mv2.jpg" alt="Sabdia luxury home" loading="lazy">
       </div>
-      <div class="h-slide" data-name="SIERRA · Holland Park West">
-        <img src="https://static.wixstatic.com/media/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_85/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg" alt="Sabdia luxury residence — SIERRA, Holland Park West" loading="lazy">
+      <div class="h-slide">
+        <img src="https://static.wixstatic.com/media/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_85/1cc2db_5186783e26c04be6ab983f26b9b78377~mv2.jpg" alt="Sabdia luxury home" loading="lazy">
       </div>
     </div>
     <div class="h-overlay"></div>
-    <div class="h-grain"></div>
-    <div class="h-content inner">
-      <div class="h-eyebrow">
-        <div class="h-eyebrow-line"></div>
-        <span class="h-eyebrow-txt">Boutique Luxury Home Builder &amp; Developer — Brisbane</span>
+
+    <!-- Middle: centred tagline + eyebrow below -->
+    <div class="h-mid">
+      <div class="h-mid-content">
+        <h1 class="h-title">Design<span class="h-title-dot"> · </span>Develop<span class="h-title-dot"> · </span>Construct</h1>
+        <p class="h-eyebrow-txt">Boutique Luxury Home Builder &amp; Developer — Brisbane</p>
       </div>
-      <h1 class="h-title">Design<span class="h-title-dot"> · </span>Develop<span class="h-title-dot"> · </span>Construct</h1>
-      <div class="h-meta">
-        <p class="h-sub">Redefining luxury through design, detail, and craftsmanship. For over a decade, Sabdia has delivered award-winning residences that set a new benchmark for contemporary living in Brisbane.</p>
+    </div>
+
+    <!-- Bottom zone: description above line, then gold line, then action bar -->
+    <div class="h-bottom">
+      <div class="h-desc-bar inner">
+        <p class="h-desc">Redefining luxury through design, detail, and craftsmanship. For over ten years, Sabdia has delivered award-winning residences that set a new benchmark for contemporary living in Brisbane.</p>
+      </div>
+      <div class="h-bottom-rule"></div>
+      <div class="h-bottom-inner inner">
+        <div class="h-bottom-left">
+          <div class="h-dots" id="hDots">
+            <div class="h-dot active"></div>
+            <div class="h-dot"></div>
+            <div class="h-dot"></div>
+          </div>
+          <p class="h-award"><em>Award-Winning Luxury Residences.</em></p>
+        </div>
         <div class="h-actions">
-          <a href="/properties/" class="btn-p">View Properties <span class="btn-arrow">&rarr;</span></a>
+          <a href="/properties/" class="btn-p">View Properties &rarr;</a>
           <a href="/contact/" class="btn-g btn-g-light">Begin a Conversation</a>
         </div>
       </div>
     </div>
-    <div class="h-strip">
-      <div class="h-strip-l">
-        <span class="h-strip-num mono" id="hStripNum">01 <span>/ 03</span></span>
-        <span class="h-strip-name" id="hStripName">QASR · Coorparoo</span>
-      </div>
-      <div class="h-strip-bar"><div class="h-strip-bar-fill" id="hStripBar"></div></div>
-      <div class="h-strip-r">
-        <span>Scroll</span>
-        <svg width="10" height="14" viewBox="0 0 10 14" fill="none" aria-hidden="true"><path d="M5 1v12M1 9l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      </div>
+    <div class="h-scroll-wrap">
+      <span class="h-scroll-num">01 / 03</span>
+      <div class="h-scroll-line"></div>
     </div>
-  </header>
+  </section>
 
   <!-- STATS -->
-  <div class="stats-band">
+  <div class="stats-band sp-sm">
     <div class="stats-grid inner">
       <div class="stat reveal">
-        <span class="stat-n"><span class="counter" data-target="100">0</span><span class="stat-u">+</span></span>
-        <div class="stat-l"><span>Residences Delivered</span></div>
+        <span class="stat-n"><span class="counter" data-target="10">0</span><span class="stat-u">+</span></span>
+        <div class="stat-l">Years in Brisbane</div>
       </div>
       <div class="stat reveal d1">
-        <span class="stat-n"><span class="counter" data-target="10">0</span><span class="stat-u">+</span></span>
-        <div class="stat-l"><span>Years in Brisbane</span></div>
+        <span class="stat-n"><span class="counter" data-target="100">0</span><span class="stat-u">+</span></span>
+        <div class="stat-l">Residences Delivered</div>
       </div>
       <div class="stat reveal d2">
         <span class="stat-n"><span class="counter" data-target="5">0</span><span class="stat-u">★</span></span>
-        <div class="stat-l"><span>Multi-Award Winning</span></div>
+        <div class="stat-l">Multi-Award Winning</div>
       </div>
       <div class="stat reveal d3">
         <span class="stat-n">100<span class="stat-u">%</span></span>
-        <div class="stat-l"><span>In-House Delivery</span></div>
+        <div class="stat-l">In-House Delivery</div>
       </div>
     </div>
   </div>
 
   <!-- MARQUEE -->
-  <div class="mq-band" aria-hidden="true">
+  <div class="mq-band">
     <div class="mq-track">
-      <div class="mq-item">Multi-Award Winning</div><div class="mq-sep"></div>
-      <div class="mq-item">Design · Develop · Construct</div><div class="mq-sep"></div>
-      <div class="mq-item">Inner Brisbane Specialist</div><div class="mq-sep"></div>
-      <div class="mq-item">100+ Residences Since 2013</div><div class="mq-sep"></div>
-      <div class="mq-item">Boutique Luxury Developer</div><div class="mq-sep"></div>
-      <div class="mq-item">Multi-Award Winning</div><div class="mq-sep"></div>
-      <div class="mq-item">Design · Develop · Construct</div><div class="mq-sep"></div>
-      <div class="mq-item">Inner Brisbane Specialist</div><div class="mq-sep"></div>
-      <div class="mq-item">100+ Residences Since 2013</div><div class="mq-sep"></div>
-      <div class="mq-item">Boutique Luxury Developer</div><div class="mq-sep"></div>
+      {[...mqItems, ...mqItems].map((item, i) => (
+        <>
+          {i > 0 && <div class="mq-sep"></div>}
+          <div class="mq-item"><svg width="10" height="10" viewBox="0 0 14 14" fill="#9E8B6A"><polygon points="7,1 8.8,5.6 13.7,5.6 9.9,8.5 11.2,13.4 7,10.5 2.8,13.4 4.1,8.5 0.3,5.6 5.2,5.6"/></svg>{item}</div>
+        </>
+      ))}
     </div>
   </div>
 
@@ -139,7 +151,7 @@ const jsonLd = JSON.stringify({
       <div>
         <p class="about-p reveal d2">At Sabdia, we manage every step of the residential development journey in-house — from visionary design through to expert construction. This integrated approach allows us to maintain meticulous control over quality, timing, and innovation, delivering homes that stand the test of time.</p>
         <p class="about-p reveal d2">With a focus on creating exceptional living spaces, Sabdia Constructions is dedicated to shaping the future of residential developments through innovation, quality, and unparalleled craftsmanship. Every project begins with a deep understanding of both the site and the clients who will call it home.</p>
-        <blockquote class="pullq reveal d3">We are not merely builders — we are creators of legacy. Each residence we deliver is conceived as a singular work of architecture.</blockquote>
+        <p class="about-p reveal d2">We are not merely builders — we are creators of legacy. Each residence we deliver is conceived as a singular work of architecture, thoughtfully designed to complement its surroundings and exceed every expectation of luxury living.</p>
         <div class="sig reveal d3">
           <div class="sig-name">Sabdia</div>
           <div class="sig-title">Founder &amp; Principal</div>
@@ -148,21 +160,18 @@ const jsonLd = JSON.stringify({
           <div class="about-val">
             <span class="about-val-n">i.</span>
             <div><div class="about-val-t">Integrated Delivery</div><div class="about-val-d">Design, develop, and construct under one roof — seamless from concept to keys.</div></div>
-            <span class="about-val-mark" aria-hidden="true">&rarr;</span>
           </div>
           <div class="about-val">
             <span class="about-val-n">ii.</span>
             <div><div class="about-val-t">Uncompromising Quality</div><div class="about-val-d">Only the finest materials, master tradespeople, and meticulous attention to detail.</div></div>
-            <span class="about-val-mark" aria-hidden="true">&rarr;</span>
           </div>
           <div class="about-val">
             <span class="about-val-n">iii.</span>
             <div><div class="about-val-t">Boutique &amp; Personal</div><div class="about-val-d">Limited projects annually to ensure every client receives our full dedication.</div></div>
-            <span class="about-val-mark" aria-hidden="true">&rarr;</span>
           </div>
         </div>
         <div class="reveal d5" style="margin-top:40px">
-          <a href="/about/" class="btn-g">Our Full Story <span class="btn-arrow">&rarr;</span></a>
+          <a href="/about/" class="btn-g">Our Full Story &rarr;</a>
         </div>
       </div>
     </div>
@@ -176,10 +185,7 @@ const jsonLd = JSON.stringify({
           <div class="slabel reveal">For Sale</div>
           <h2 class="proj-h reveal d1"><em>Current</em> Properties</h2>
         </div>
-        <div class="proj-hdr-r reveal d2">
-          <span class="proj-hdr-count">{countWord(all.length)} residences</span>
-          <a href="/properties/" class="btn-g">View All <span class="btn-arrow">&rarr;</span></a>
-        </div>
+        <a href="/properties/" class="btn-g reveal d2">View All &rarr;</a>
       </div>
     </div>
 
@@ -192,7 +198,7 @@ const jsonLd = JSON.stringify({
             imgW={1400}
             imgH={900}
             specs={[`${hero.data.beds} Bed`, `${hero.data.baths} Bath`, `${hero.data.cars} Garage`, landLabel(hero.data.land, hero.data.landOver)]}
-            sep="gap"
+            sep="dot"
           />
         )}
         {smallA && (
@@ -203,7 +209,7 @@ const jsonLd = JSON.stringify({
             imgW={900}
             imgH={680}
             specs={[`${smallA.data.beds} Bed`, `${smallA.data.baths} Bath`, landLabel(smallA.data.land, smallA.data.landOver)]}
-            sep="gap"
+            sep="dot"
           />
         )}
         {smallB && (
@@ -214,7 +220,7 @@ const jsonLd = JSON.stringify({
             imgW={900}
             imgH={680}
             specs={[`${smallB.data.beds} Bed`, `${smallB.data.baths} Bath`, landLabel(smallB.data.land, smallB.data.landOver)]}
-            sep="gap"
+            sep="dot"
           />
         )}
       </div>
@@ -229,7 +235,7 @@ const jsonLd = JSON.stringify({
               imgW={900}
               imgH={560}
               specs={[`${p.data.beds} Bed`, `${p.data.baths} Bath`, landLabel(p.data.land, p.data.landOver)]}
-              sep="gap"
+              sep="dot"
             />
           ))}
           {sold.map((p, i) => (
@@ -248,7 +254,7 @@ const jsonLd = JSON.stringify({
         <h2 class="svc-h reveal d1">Full-spectrum<br><em>development</em><br>expertise.</h2>
         <p class="svc-p reveal d2">From site acquisition through to final handover, Sabdia manages every element in-house — ensuring seamless delivery and uncompromising quality at every stage.</p>
         <div class="reveal d3" style="margin-top:40px">
-          <a href="/services/" class="btn-g" style="margin-top:8px">Explore Services <span class="btn-arrow">&rarr;</span></a>
+          <a href="/services/" class="btn-g" style="margin-top:8px">Explore Services &rarr;</a>
         </div>
       </div>
       <ul class="svc-list">
@@ -299,13 +305,7 @@ const jsonLd = JSON.stringify({
   <!-- PROCESS -->
   <section class="sp">
     <div class="inner">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:32px;flex-wrap:wrap">
-        <div>
-          <div class="slabel reveal">Our Process</div>
-          <h2 class="proj-h reveal d1" style="font-size:clamp(36px,4.5vw,64px)"><em>Four</em> stages.<br>One vision.</h2>
-        </div>
-        <div class="reveal d2 mono" style="font-size:10.5px;letter-spacing:.18em;color:var(--taupe);text-transform:uppercase">01 → 04</div>
-      </div>
+      <div class="slabel reveal" style="margin-bottom:56px">Our Process</div>
       <div class="proc-track">
         <div class="proc-step reveal">
           <div class="proc-n">1</div>
@@ -369,7 +369,7 @@ const jsonLd = JSON.stringify({
         <li>Dedicated liaison with the Sabdia team</li>
       </ul>
       <div class="agent-btns reveal d4">
-        <a href="/agent-access/" class="btn-p">Apply for Access <span class="btn-arrow">&rarr;</span></a>
+        <a href="/agent-access/" class="btn-p">Apply for Access</a>
         <a href="/contact/" class="btn-g">Learn More</a>
       </div>
     </div>
@@ -410,7 +410,7 @@ const jsonLd = JSON.stringify({
             </select>
           </div>
           <div class="fg"><label class="fl">Message*</label><textarea class="fta" name="message" placeholder="Tell us about your interest..." required></textarea></div>
-          <button type="submit" class="fsub" id="fsub">Submit Enquiry <span class="btn-arrow">&rarr;</span></button>
+          <button type="submit" class="fsub" id="fsub">Submit &rarr;</button>
           <p class="form-note">We typically respond within one business day.</p>
         </form>
       </div>

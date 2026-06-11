@@ -94,18 +94,15 @@ if (mobBtn && mobNav) {
 
 // ── HERO SLIDESHOW + STRIP INDICATOR ────────────────────────
 const slides = document.querySelectorAll('.h-slide');
-const hStripNum = document.getElementById('hStripNum');
-const hStripName = document.getElementById('hStripName');
-const hStripBar = document.getElementById('hStripBar');
+const hDots = document.querySelectorAll('#hDots .h-dot');
+const hScrollNum = document.querySelector('.h-scroll-num');
 if (slides.length > 1) {
   let si = 0;
-  const names = Array.from(slides).map(s => s.dataset.name || '');
   const total = slides.length;
   const pad = (n) => String(n).padStart(2, '0');
   const update = () => {
-    if (hStripNum) hStripNum.innerHTML = `${pad(si + 1)} <span>/ ${pad(total)}</span>`;
-    if (hStripName) hStripName.textContent = names[si] || '';
-    if (hStripBar) hStripBar.style.width = `${((si + 1) / total) * 100}%`;
+    hDots.forEach((d, i) => d.classList.toggle('active', i === si));
+    if (hScrollNum) hScrollNum.textContent = `${pad(si + 1)} / ${pad(total)}`;
   };
   const goTo = (i) => {
     slides[si].classList.remove('active');

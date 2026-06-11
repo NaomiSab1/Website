@@ -1,0 +1,85 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { supabaseConfigured, getAdminUser, serviceClient } from '../../lib/admin.js';
+
+const user = supabaseConfigured ? await getAdminUser(Astro.cookies) : null;
+
+let properties = [];
+let loadError = '';
+if (user) {
+  const { data, error } = await serviceClient()
+    .from('properties')
+    .select('slug, name, suburb, status, display_order, year, beds, baths, cars, land')
+    .order('display_order', { ascending: true });
+  if (error) loadError = error.message;
+  else properties = data ?? [];
+}
+
+const loginError = Astro.url.searchParams.get('error');
+const saved = Astro.url.searchParams.get('saved');
+const deleted = Astro.url.searchParams.get('deleted');
+---
+<Admin title={user ? 'Properties' : 'Log in'} user={user}>
+  {!supabaseConfigured && (
+    <div>
+      <h1>Admin not connected yet</h1>
+      <div class="note">
+        The admin needs the Supabase database. Add <code>SUPABASE_URL</code>,
+        <code>SUPABASE_ANON_KEY</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code> in
+        Vercel → Settings → Environment Variables, then redeploy.
+        Setup steps are in the project README.
+      </div>
+    </div>
+  )}
+
+  {supabaseConfigured && !user && (
+    <div style="max-width:380px;margin:8vh auto 0">
+      <h1>Log in</h1>
+      {loginError && <div class="note error">Wrong email or password. Try again.</div>}
+      <form method="POST" action="/api/admin/login">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn" style="width:100%">Log in</button>
+      </form>
+      <p class="muted" style="margin-top:18px">Accounts are created in Supabase → Authentication → Users.</p>
+    </div>
+  )}
+
+  {user && (
+    <div>
+      <h1>Properties</h1>
+      {saved && <div class="note">Saved {saved}.</div>}
+      {deleted && <div class="note">Deleted {deleted}.</div>}
+      {loadError && <div class="note error">Could not load properties: {loadError}</div>}
+      <div class="row" style="margin:0 0 18px">
+        <a href="/admin/property/new/" class="btn">Add Property</a>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Order</th><th>Name</th><th>Suburb</th><th>Status</th><th>Specs</th><th></th></tr>
+        </thead>
+        <tbody>
+          {properties.map((p) => (
+            <tr>
+              <td>{p.display_order}</td>
+              <td><strong>{p.name}</strong></td>
+              <td>{p.suburb}</td>
+              <td><span class={`tag ${p.status === 'sold' ? 'tag-sold' : 'tag-sale'}`}>{p.status === 'sold' ? 'Sold' : 'For Sale'}</span></td>
+              <td class="muted">{p.beds} bed · {p.baths} bath · {p.cars} car · {p.land}m²</td>
+              <td><a href={`/admin/property/${p.slug}/`} style="color:var(--gold)">Edit →</a></td>
+            </tr>
+          ))}
+          {properties.length === 0 && !loadError && (
+            <tr><td colspan="6" class="muted">No properties yet — run supabase/seed.sql or add one.</td></tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )}
+</Admin>

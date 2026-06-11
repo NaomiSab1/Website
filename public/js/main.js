@@ -208,7 +208,7 @@ if (window.matchMedia('(pointer: fine)').matches && !reduceMotion) {
   });
 }
 
-// ── CONTACT FORMS — submit to Netlify Forms via AJAX ────────
+// ── CONTACT FORMS — submit to /api/contact via AJAX ─────────
 document.querySelectorAll('form#cform, form.cform').forEach(cform => {
   cform.addEventListener('submit', async e => {
     e.preventDefault();
@@ -218,7 +218,7 @@ document.querySelectorAll('form#cform, form.cform').forEach(cform => {
     btn.style.background = '#6B6860';
     try {
       const body = new URLSearchParams(new FormData(cform)).toString();
-      const res = await fetch(window.location.pathname, {
+      const res = await fetch(cform.getAttribute('action') || '/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body

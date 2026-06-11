@@ -1,6 +1,12 @@
+# Decap CMS on Vercel: authentication goes through the GitHub OAuth App via
+# the serverless functions at /api/auth and /api/callback.
+# base_url must match the deployed site URL (update it if the domain changes).
 backend:
-  name: git-gateway
+  name: github
+  repo: NaomiSab1/Website
   branch: main
+  base_url: https://www.sabdiaconstructions.com.au
+  auth_endpoint: /api/auth
 
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"

@@ -1,9 +1,9 @@
 # Sabdia Constructions — Website
 
-Marketing site for Sabdia Constructions, built with [Astro](https://astro.build).
-The site is statically generated for speed and SEO, but content is fully
-data-driven: properties live in a content collection and can be edited through
-a CMS without touching any HTML.
+Marketing site for Sabdia Constructions, built with [Astro](https://astro.build)
+and deployed on [Vercel](https://vercel.com). The site is statically generated
+for speed and SEO, but content is fully data-driven: properties live in a
+content collection and can be edited through a CMS without touching any HTML.
 
 ## Development
 
@@ -28,8 +28,31 @@ src/
 public/
   css/, js/             # styles and client-side JS, served as-is
   admin/                # Decap CMS (content editor UI at /admin/)
-netlify.toml            # build settings + redirects from old .html URLs
+api/
+  contact.js            # form submissions → email via Resend
+  auth.js, callback.js  # GitHub OAuth for the CMS login
+vercel.json             # trailing slashes + redirects from old .html URLs
 ```
+
+## Deploying on Vercel
+
+1. Go to [vercel.com](https://vercel.com) → **Add New… → Project** and import
+   the `NaomiSab1/Website` GitHub repository.
+2. Vercel auto-detects Astro — no build settings needed. Click **Deploy**.
+3. Every push to `main` deploys to production; every branch/PR gets its own
+   preview URL automatically.
+4. Add your custom domain (e.g. `www.sabdiaconstructions.com.au`) under
+   **Settings → Domains**.
+
+### Environment variables (Settings → Environment Variables)
+
+| Variable | Purpose |
+| --- | --- |
+| `RESEND_API_KEY` | API key from [resend.com](https://resend.com) — powers the contact/enquiry forms |
+| `CONTACT_EMAIL` | Address that receives form submissions |
+| `CONTACT_FROM` | Optional verified sender, e.g. `Sabdia Website <noreply@sabdiaconstructions.com.au>` |
+| `OAUTH_GITHUB_CLIENT_ID` | GitHub OAuth App client ID — powers the CMS login |
+| `OAUTH_GITHUB_CLIENT_SECRET` | GitHub OAuth App client secret |
 
 ## Editing properties
 
@@ -43,26 +66,28 @@ contact form's enquiry options — and generates its detail page at
 Set `status: sold` to move a property into the "Sold Prior to Completion"
 sections and switch its detail page to the sold layout.
 
-### CMS (Decap)
+### CMS (Decap) setup
 
 `/admin/` hosts Decap CMS configured against `src/content/properties`.
-To activate it on Netlify:
+Saving in the CMS commits to GitHub, which triggers a Vercel redeploy.
 
-1. Enable **Identity** in the Netlify site settings (invite-only registration).
-2. Enable **Git Gateway** under Identity → Services.
-3. Invite editors via Identity; they log in at `/admin/`.
+One-time setup:
 
-Every CMS save commits to the repo, which triggers a rebuild and deploy.
+1. Create a **GitHub OAuth App** (GitHub → Settings → Developer settings →
+   OAuth Apps → New):
+   - Homepage URL: your site URL
+   - Authorization callback URL: `https://<your-domain>/api/callback`
+2. Put the client ID/secret in the Vercel env vars above and redeploy.
+3. Make sure `base_url` in `public/admin/config.yml` matches your deployed
+   site URL.
+
+Editors log in at `/admin/` with their GitHub account; they need write access
+to this repository.
 
 ## Forms
 
 All forms (contact, property enquiry, agent application) post to
-[Netlify Forms](https://docs.netlify.com/forms/setup/) — no backend required.
-Submissions appear in the Netlify dashboard under Forms, where email
-notifications can be configured. Forms submit via AJAX from `public/js/main.js`.
-
-## Hosting
-
-Deploy on Netlify: connect the repo, and `netlify.toml` supplies the build
-command (`npm run build`) and publish directory (`dist`). It also contains
-301 redirects from the old `*.html` URLs to the new clean URLs.
+`/api/contact`, a Vercel serverless function that emails submissions via
+[Resend](https://resend.com) (free tier is plenty for a contact form).
+A honeypot field filters out basic spam bots. Until `RESEND_API_KEY` and
+`CONTACT_EMAIL` are configured, submissions return an error.

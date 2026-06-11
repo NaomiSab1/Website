@@ -122,7 +122,7 @@ const jsonLd = JSON.stringify({
         <div class="prop-enquire">
           <div class="prop-enquire-h">{d.enquiryHeading}</div>
           <p style="font-size:13px;font-weight:300;color:var(--ink3);line-height:1.75;margin-bottom:24px">{d.enquiryText}</p>
-          <form class="cform" id="cform" name="property-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <form class="cform" id="cform" name="property-enquiry" method="POST" action="/api/contact">
             <input type="hidden" name="form-name" value="property-enquiry">
             <input type="hidden" name="property" value={d.name}>
             <p class="hidden" style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>

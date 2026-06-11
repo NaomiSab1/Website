@@ -125,7 +125,7 @@ const forSale = (await getCollection('properties', (p) => p.data.status === 'for
         </div>
       </div>
       <div>
-        <form class="cform reveal d1" id="cform" name="agent-application" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <form class="cform reveal d1" id="cform" name="agent-application" method="POST" action="/api/contact">
           <input type="hidden" name="form-name" value="agent-application">
           <p class="hidden" style="display:none"><label>Don't fill this out: <input name="bot-field"></label></p>
           <div class="frow">

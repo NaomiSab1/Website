@@ -1,140 +1,93 @@
-# Sabdia Constructions — Website + Admin CMS
+# Sabdia Constructions — Website
 
-Self-serve website for [sabdiaconstructions.com.au](https://www.sabdiaconstructions.com.au):
-a public site rendered from Supabase data, plus a block-based admin panel at `/admin`
-(Shopify/Wix-style: choose sections, arrange them, edit content, preview, publish).
+Marketing site for Sabdia Constructions, built with [Astro](https://astro.build),
+backed by a [Supabase](https://supabase.com) database, and deployed on
+[Vercel](https://vercel.com).
 
-| Layer | Tech |
-|---|---|
-| Frontend + admin | Next.js 15 (App Router), deployed on Vercel |
-| Database / auth / files | Supabase (Postgres + Auth + Storage) |
-| Publishing | ISR with on-demand revalidation — publish is live in seconds, no redeploy |
+- **Properties live in Supabase** — edit a row in the `properties` table and
+  the website updates immediately (pages are server-rendered, no rebuild).
+- **Enquiries are saved to Supabase** — every form submission (contact,
+  property enquiry, agent application) lands in the `enquiries` table, and can
+  optionally be emailed to you via Resend.
+- If Supabase isn't configured yet, the site still works: it renders from the
+  bundled seed data in `src/lib/seed-properties.json`.
 
-The previous static site is preserved unchanged in [`legacy-static/`](legacy-static/).
-A 1-page guide for non-technical editors is at [`docs/EDITOR-GUIDE.md`](docs/EDITOR-GUIDE.md).
+## Development
 
----
-
-## How it works
-
-```
-┌──────────── /admin (Supabase Auth, role-based) ────────────┐
-│ pages ──► sections (working copy / DRAFT)                  │
-│   Save draft   → writes sections                           │
-│   Preview      → /preview/[id] renders the draft (iframe,  │
-│                  desktop/mobile toggle)                    │
-│   Publish      → snapshot sections → pages.published_      │
-│                  snapshot + page_versions row + revalidate │
-│   Restore      → version snapshot → draft + live           │
-└────────────────────────────────────────────────────────────┘
-              │ revalidateTag('page:slug')
-              ▼
-┌─────────── public site ────────────────────────────────────┐
-│ "/" and "/[slug]" render pages.published_snapshot through  │
-│ the block registry (hero, gallery, showcase, …), cached    │
-│ with unstable_cache tags per page                          │
-└─────────────────────────────────────────────────────────────┘
+```bash
+npm install
+npm run dev      # local dev server at http://localhost:4321
+npm run build    # production build
 ```
 
-- **Draft vs live are separate**: editing never leaks to the public site until Publish.
-- **Versions**: every Publish (and Restore) writes a `page_versions` snapshot; one-click
-  rollback restores both the draft and the live page.
-- **Audit**: every action (save, publish, rollback, uploads, settings) is logged to
-  `audit_log` (Admin → Activity).
-- **Roles**: `admin` = full control (create/delete pages, settings, custom HTML);
-  `editor` = content only. Enforced in the UI, in server actions, **and in RLS**.
-- **Blocks**: one registry (`lib/blocks/registry.ts`) drives both the admin editor forms
-  and the public renderers (`components/blocks/`). Adding a block type = add a registry
-  entry + a renderer component.
+## Project structure
 
-## Setup
+```
+src/
+  pages/                # one .astro file per page
+  pages/properties/     # listing page + [slug].astro (one template, every property)
+  pages/api/contact.ts  # form endpoint → Supabase enquiries (+ optional email)
+  components/           # Nav, Footer, PropertyCard, SoldCard
+  layouts/Base.astro    # shared <head>, nav, footer
+  lib/db.js             # property data layer (Supabase, with seed fallback)
+  lib/seed-properties.json
+  content/properties/   # original markdown content (source for the seed)
+supabase/
+  schema.sql            # tables + row-level security policies
+  seed.sql              # inserts the current six properties
+public/                 # css, js, static assets
+scripts/properties-to-seed.mjs  # regenerates seed JSON/SQL from the markdown
+vercel.json             # 301 redirects from the old .html URLs
+```
+
+## One-time setup
 
 ### 1. Supabase
 
-1. Create a project at [database.new](https://database.new).
-2. Apply the schema (tables, RLS, triggers, storage bucket):
-   ```bash
-   npm i -g supabase
-   supabase link --project-ref YOUR_PROJECT_REF
-   supabase db push                  # applies supabase/migrations/
-   ```
-   (or paste `supabase/migrations/0001_init.sql` into the SQL editor).
-3. Seed the real Sabdia content (pages, sections, projects, settings — published
-   immediately): run `supabase/seed.sql` in the SQL editor, or
-   `psql "$DATABASE_URL" -f supabase/seed.sql`.
-4. Create your login: Dashboard → Authentication → Users → *Add user* (email +
-   password, confirm email). New users default to the `editor` role; promote yourself:
-   ```sql
-   update public.profiles set role = 'admin' where email = 'you@sabdia.com.au';
-   ```
+1. Create a project at [supabase.com](https://supabase.com) (free tier is fine).
+2. In the project, open **SQL Editor** and run the contents of
+   `supabase/schema.sql`, then `supabase/seed.sql`.
+3. Copy from **Project Settings → API**:
+   - Project URL → `SUPABASE_URL`
+   - `anon` `public` key → `SUPABASE_ANON_KEY`
+   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` (keep secret)
 
-### 2. App
+### 2. Vercel
 
-```bash
-cp .env.example .env.local   # fill in the Supabase keys (Project Settings → API)
-npm install
-npm run dev                  # http://localhost:3000  /  http://localhost:3000/admin
-```
+1. [vercel.com](https://vercel.com) → **Add New… → Project** → import
+   `NaomiSab1/Website`. Astro is auto-detected.
+2. Under **Settings → Environment Variables**, add the three Supabase
+   variables above (and optionally the Resend ones below), then redeploy.
+3. Add your custom domain under **Settings → Domains**.
 
-### 3. Deploy (Vercel)
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `SUPABASE_URL` | yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | yes | Public read access to properties |
+| `SUPABASE_SERVICE_ROLE_KEY` | yes | Server-side insert of enquiries |
+| `RESEND_API_KEY` | optional | Email a copy of each enquiry ([resend.com](https://resend.com)) |
+| `CONTACT_EMAIL` | optional | Address that receives those emails |
+| `CONTACT_FROM` | optional | Verified sender address |
 
-1. Import the repo into Vercel (framework auto-detected).
-2. Add the env vars from `.env.example` (Production + Preview).
-3. Deploy. Set `NEXT_PUBLIC_SITE_URL` to the production domain — it drives the
-   sitemap, canonical URLs, and OG tags.
+## Editing properties
 
-### 4. Lead forwarding (optional)
+Open Supabase → **Table Editor → properties**. Each row is one property; the
+site reads them live, ordered by `display_order`.
 
-- `LEADS_WEBHOOK_URL` — every contact form submission is POSTed there as JSON
-  (point it at a Monday.com webhook / Zapier / Make).
-- `RESEND_API_KEY` + `LEADS_NOTIFY_EMAIL` — email notification per lead.
-- Either way, all leads are stored in Supabase and visible at Admin → Leads.
+- Add a row → the property appears everywhere (listing page, home page grid,
+  projects page, footer, contact-form options) and gets a page at
+  `/properties/<slug>/`.
+- Set `status` to `sold` → it moves to the "Sold Prior to Completion"
+  sections and its page switches to the sold layout.
+- `features` and `gallery` are JSON columns — copy an existing row's format.
+- The `headline` may contain `<br>` and `<em>` tags.
 
-## Acceptance test
+Enquiries arrive in **Table Editor → enquiries**, newest first.
 
-1. Log in at `/admin`, open **Home**.
-2. Change the hero headline; swap the hero image (Choose image → upload).
-3. Drag the **Testimonials** section above the **Project showcase** section.
-4. **Publish** → the live site shows all three changes within seconds
-   (tag-based revalidation, no redeploy).
-5. Open **History**, restore the previous version → the live site reverts.
+## Versions
 
-## Data model
+Site versions are marked with git tags:
 
-| Table | Purpose |
-|---|---|
-| `pages` | slug, title, status, SEO fields, `published_snapshot` (what the public sees) |
-| `sections` | working copy: `type`, `sort_order`, `config` (layout), `content` (jsonb) |
-| `page_versions` | full snapshots for one-click rollback |
-| `projects` | structured portfolio (QASR, SOLACE, …, 94 Newman, Matong) |
-| `media` | Storage-backed library with alt text + dimensions |
-| `site_settings` | nav, footer, brand, theme tokens |
-| `form_submissions` | contact form leads |
-| `audit_log` | who changed what, when |
-| `profiles` | role per auth user (`admin` / `editor`) |
-
-RLS is enabled on every table; the service role key is used server-side only
-(form inserts + external revalidation endpoint). Public/anon can read **published**
-pages, projects, and settings — never drafts.
-
-## SEO & performance
-
-- Per-page meta/OG fields, `sitemap.xml`, `robots.txt`, LocalBusiness JSON-LD on home.
-- `next/image` everywhere (responsive `srcset`, lazy loading); uploads are
-  client-side compressed (max 2400px, ~85% quality) before hitting Storage.
-- Public pages are static (ISR) — no Supabase call on the request path.
-
-## No lock-in
-
-Admin → Pages → **Export all content (JSON)** downloads every page, section, project,
-setting and media record. `POST /api/revalidate` (with `REVALIDATE_SECRET`) lets any
-external system bust the cache.
-
-## v2 path (intentionally out of scope now)
-
-- **Freeform canvas (Wix-style)**: the `config` jsonb on sections is the escape hatch —
-  a v2 canvas can add absolute-positioning data per block without schema changes.
-- **E-commerce**: keep Supabase as source of truth; add a `products` table and new
-  block types in the registry.
-- **Multi-language**: add a `locale` column to `pages` + `site_settings`
-  (slug+locale unique); the renderer already resolves pages purely by slug.
+- `v1.0-static` — original hand-written HTML site
+- `v2.0-astro` — Astro rebuild, markdown content + Decap CMS
+- `v3.0-astro-supabase` — Astro + Supabase database (current)

@@ -69,7 +69,16 @@ vercel.json             # 301 redirects from the old .html URLs
 | `CONTACT_EMAIL` | optional | Address that receives those emails |
 | `CONTACT_FROM` | optional | Verified sender address |
 
-## Editing properties
+## Admin
+
+The site has a built-in admin at **`/admin/`**: log in with email + password,
+edit or add properties, and read enquiries. Changes appear on the site
+immediately.
+
+To create admin accounts: Supabase → **Authentication → Users → Add user**
+(set "Auto confirm user"). Only accounts created there can log in.
+
+## Editing properties (alternative: Supabase directly)
 
 Open Supabase → **Table Editor → properties**. Each row is one property; the
 site reads them live, ordered by `display_order`.

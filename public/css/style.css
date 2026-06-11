@@ -1,7 +1,7 @@
 /* ============================================================
    SABDIA CONSTRUCTIONS — DESIGN SYSTEM
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@200;300;400;500&display=swap');
 
 :root {
   --bg:        #F2F0EB;
@@ -577,4 +577,25 @@ footer{background:var(--dark);padding-top:0}
   .prop-specs-inner{grid-template-columns:repeat(2,1fr)}
   .prop-spec-item:nth-child(3n){border-right:1px solid rgba(255,255,255,.08)}
   .prop-spec-item:nth-child(2n){border-right:none}
+}
+
+/* ── READING TYPOGRAPHY ──────────────────────────────────────
+   Body copy set in an editorial serif; UI, nav, labels, buttons
+   and the hero wordmark stay in Jost. */
+p,.svc-d,.proc-d,.about-val-d,.tl-desc,.agent-ben-d{font-family:'EB Garamond',Georgia,serif}
+.h-eyebrow-txt,.ftag,.form-note{font-family:var(--font-u)}
+.h-desc{font-size:14.5px}
+.about-p{font-size:15.5px;line-height:1.85}
+.about-val-d{font-size:14px}
+.svc-p{font-size:15px}
+.svc-d{font-size:15px}
+.proc-d{font-size:14.5px}
+.agent-p{font-size:15px}
+.footer-tag-sub{font-size:13px;letter-spacing:.04em}
+.page-hero-sub{font-size:15px}
+.prop-body-p{font-size:15.5px;line-height:1.85}
+@media(max-width:760px){
+  .about-p,.prop-body-p{font-size:14.5px}
+  .svc-d{font-size:14px}
+  .page-hero-sub{font-size:13.5px}
 }
